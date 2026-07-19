@@ -291,3 +291,94 @@ function getSkillInfo(skillName) {
         projectDesc: '功能演示窗口'
     };
 }
+
+let touchStartY = 0;
+let touchEndY = 0;
+let scrollStartY = 0;
+let isScrolling = false;
+let autoScrolling = false;
+
+function initScrollGesture() {
+    document.addEventListener('touchstart', (e) => {
+        touchStartY = e.touches[0].clientY;
+        scrollStartY = window.scrollY;
+    }, { passive: true });
+
+    document.addEventListener('touchend', (e) => {
+        if (autoScrolling) return;
+        
+        touchEndY = e.changedTouches[0].clientY;
+        handleSwipe();
+    }, { passive: true });
+
+    let lastScrollTime = 0;
+    let lastScrollY = 0;
+    
+    window.addEventListener('wheel', (e) => {
+        if (autoScrolling) return;
+        
+        const currentTime = Date.now();
+        const deltaY = e.deltaY;
+        
+        if (currentTime - lastScrollTime < 200) {
+            const scrollSpeed = Math.abs(deltaY);
+            if (scrollSpeed > 100 && deltaY > 0) {
+                const skillsSection = document.getElementById('skills');
+                if (skillsSection && window.scrollY < window.innerHeight) {
+                    autoScrollToSection(skillsSection);
+                }
+            }
+        }
+        
+        lastScrollTime = currentTime;
+        lastScrollY = window.scrollY;
+    }, { passive: true });
+}
+
+function handleSwipe() {
+    const swipeThreshold = 150;
+    const swipeDistance = touchStartY - touchEndY;
+    
+    if (swipeDistance > swipeThreshold) {
+        const skillsSection = document.getElementById('skills');
+        if (skillsSection && window.scrollY < window.innerHeight) {
+            autoScrollToSection(skillsSection);
+        }
+    }
+}
+
+function autoScrollToSection(element) {
+    autoScrolling = true;
+    
+    const targetY = element.offsetTop;
+    const startY = window.scrollY;
+    const distance = targetY - startY;
+    const duration = 800;
+    const startTime = Date.now();
+    
+    function animateScroll() {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        const easeProgress = easeOutCubic(progress);
+        
+        window.scrollTo({
+            top: startY + distance * easeProgress,
+            behavior: 'auto'
+        });
+        
+        if (progress < 1) {
+            requestAnimationFrame(animateScroll);
+        } else {
+            autoScrolling = false;
+        }
+    }
+    
+    animateScroll();
+}
+
+function easeOutCubic(t) {
+    return 1 - Math.pow(1 - t, 3);
+}
+
+initScrollGesture();
