@@ -1,0 +1,13 @@
+{
+  "name": "lwp-resume",
+  "version": "1.0.0",
+  "description": "Personal resume website with visitor statistics",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'Build complete'",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.38.0"
+  }
+}

@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>赖伟平 - 个人简历</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'text-primary': 'var(--text-primary)',
+                        'text-secondary': 'var(--text-secondary)',
+                        'text-muted': 'var(--text-muted)',
+                        'accent-blue': 'var(--accent-blue)',
+                        'accent-orange': 'var(--accent-orange)',
+                        'accent-cyan': 'var(--accent-cyan)',
+                        'accent-purple': 'var(--accent-purple)',
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.38.0/dist/umd/supabase.min.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <canvas id="particles"></canvas>
+    <div id="mouse-glow"></div>
+
+    <nav class="nav-glass fixed top-0 left-0 right-0 z-50 px-6 py-4">
+        <div class="max-w-6xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
+                    <i class="fas fa-code text-white text-sm"></i>
+                </div>
+                <span class="font-semibold text-lg">赖伟平</span>
+            </div>
+            
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#home" class="nav-item text-text-secondary hover:text-text-primary transition-colors">首页</a>
+                <a href="#skills" class="nav-item text-text-secondary hover:text-text-primary transition-colors">技能</a>
+                <a href="#contact" class="nav-item text-text-secondary hover:text-text-primary transition-colors">联系</a>
+            </div>
+            
+            <button id="theme-toggle" class="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors">
+                <i class="fas fa-moon text-text-secondary"></i>
+            </button>
+        </div>
+    </nav>
+
+    <section id="home" class="min-h-screen flex items-center justify-center px-6 pt-20">
+        <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center w-full">
+            <div class="space-y-6 fade-in">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20">
+                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                    <span class="text-sm text-blue-400">正在求职中</span>
+                </div>
+                
+                <h1 class="text-4xl md:text-5xl font-bold leading-tight">
+                    <span class="bg-gradient-to-r from-blue-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent">您好，我是赖伟平</span>
+                </h1>
+                
+                <p class="text-text-secondary text-lg leading-relaxed">
+                    全栈开发工程师，拥有丰富的企业级项目经验。专注于构建高性能、可扩展的 Web 应用。
+                </p>
+                
+                <div class="flex flex-wrap gap-4">
+                    <a href="#skills" class="px-6 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-medium hover:opacity-90 transition-opacity">
+                        查看技能
+                    </a>
+                    <a href="#contact" class="px-6 py-3 rounded-xl border border-white/10 text-text-secondary hover:bg-white/5 transition-colors">
+                        联系我
+                    </a>
+                </div>
+                
+                <div class="mt-8">
+                    <div id="visitor-badge" class="flex items-center justify-center gap-3 px-6 py-3 rounded-xl glass-card">
+                        <i class="fas fa-users text-blue-400"></i>
+                        <span class="text-text-muted">您是第</span>
+                        <span id="visitor-number" class="text-2xl font-bold text-blue-400">--</span>
+                        <span class="text-text-muted">位访问者</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="relative fade-in">
+                <div class="relative w-80 h-80 mx-auto">
+                    <div class="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-full blur-3xl"></div>
+                    
+                    <div class="absolute inset-4 rounded-full overflow-hidden border-2 border-white/10 bg-white/5">
+                        <div id="photo-hint" class="absolute inset-0 flex flex-col items-center justify-center text-text-muted">
+                            <i class="fas fa-user text-4xl mb-2 opacity-50"></i>
+                            <span class="text-sm">如果你点击"想看我长什么样"的按钮</span>
+                            <span class="text-sm">照片会显示在这里，请你有点准备</span>
+                        </div>
+                        
+                        <img id="photo-container" src="lwp.jpg" alt="赖伟平" class="w-full h-full object-cover reveal-trigger">
+                        
+                        <div id="sad-container" class="absolute inset-0 flex flex-col items-center justify-center text-text-muted opacity-0 transition-opacity">
+                            <span class="text-6xl mb-2">😢</span>
+                            <span class="text-sm">伤心表情包</span>
+                        </div>
+                    </div>
+                    
+                    <button id="photo-reveal-btn" class="photo-btn absolute -bottom-4 left-1/2 -translate-x-1/2 px-6 py-3 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-medium flex items-center gap-2 hover:opacity-90 transition-opacity shadow-lg shadow-blue-500/25">
+                        <i class="fas fa-eye"></i>
+                        <span>想看看我长什么样？</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="skills" class="py-24 px-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16 fade-in">
+                <span class="inline-block px-4 py-1.5 rounded-full bg-blue-500/10 text-blue-400 text-sm font-medium mb-4">
+                    专业技能
+                </span>
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">掌握的技术栈</h2>
+                <p class="text-text-secondary max-w-2xl mx-auto">
+                    多年开发经验，涵盖多种编程语言和技术框架，具备全栈开发能力
+                </p>
+            </div>
+
+            <div class="space-y-16">
+                <div class="fade-in">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center">
+                            <i class="fas fa-code text-blue-400"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold">编程语言</h3>
+                            <p class="text-sm text-text-muted">后端与脚本语言</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <button class="skill-card cat-blue p-6 rounded-xl border flex flex-col items-center gap-3" data-skill="Java">
+                            <i class="fab fa-java text-3xl text-blue-400"></i>
+                            <span class="font-medium">Java</span>
+                            <span class="text-xs text-text-muted">后端开发</span>
+                        </button>
+                        <button class="skill-card cat-blue p-6 rounded-xl border flex flex-col items-center gap-3" data-skill="C++">
+                            <i class="fas fa-code text-3xl text-blue-400"></i>
+                            <span class="font-medium">C++</span>
+                            <span class="text-xs text-text-muted">系统开发</span>
+                        </button>
+                        <button class="skill-card cat-blue p-6 rounded-xl border flex flex-col items-center gap-3" data-skill="Python">
+                            <i class="fab fa-python text-3xl text-blue-400"></i>
+                            <span class="font-medium">Python</span>
+                            <span class="text-xs text-text-muted">数据分析</span>
+                        </button>
+                        <button class="skill-card cat-blue p-6 rounded-xl border flex flex-col items-center gap-3" data-skill="JavaScript">
+                            <i class="fab fa-js text-3xl text-blue-400"></i>
+                            <span class="font-medium">JavaScript</span>
+                            <span class="text-xs text-text-muted">前端开发</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="fade-in">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-orange-500/20 flex items-center justify-center">
+                            <i class="fas fa-database text-orange-400"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold">数据库</h3>
+                            <p class="text-sm text-text-muted">数据存储与管理</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <button class="skill-card cat-orange p-6 rounded-xl border flex flex-col items-center gap-3" data-skill="MySQL">
+                            <i class="fas fa-database text-3xl text-orange-400"></i>
+                            <span class="font-medium">MySQL</span>
+                            <span class="text-xs text-text-muted">关系型数据库</span>
+                        </button>
+                        <button class="skill-card cat-orange p-6 rounded-xl border flex flex-col items-center gap-3" data-skill="PostgreSQL">
+                            <i class="fab fa-postgresql text-3xl text-orange-400"></i>
+                            <span class="font-medium">PostgreSQL</span>
+                            <span class="text-xs text-text-muted">高级数据库</span>
+                        </button>
+                        <button class="skill-card cat-orange p-6 rounded-xl border flex flex-col items-center gap-3" data-skill="MongoDB">
+                            <i class="fas fa-leaf text-3xl text-orange-400"></i>
+                            <span class="font-medium">MongoDB</span>
+                            <span class="text-xs text-text-muted">NoSQL</span>
+                        </button>
+                        <button class="skill-card cat-orange p-6 rounded-xl border flex flex-col items-center gap-3" data-skill="Redis">
+                            <i class="fas fa-redo text-3xl text-orange-400"></i>
+                            <span class="font-medium">Redis</span>
+                            <span class="text-xs text-text-muted">缓存系统</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="fade-in">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-cyan-500/20 flex items-center justify-center">
+                            <i class="fab fa-react text-cyan-400"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold">前端开发</h3>
+                            <p class="text-sm text-text-muted">Web界面与交互</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <button class="skill-card cat-cyan p-6 rounded-xl border flex flex-col items-center gap-3" data-skill="HTML/CSS">
+                            <i class="fab fa-html5 text-3xl text-cyan-400"></i>
+                            <span class="font-medium">HTML/CSS</span>
+                            <span class="text-xs text-text-muted">页面结构</span>
+                        </button>
+                        <button class="skill-card cat-cyan p-6 rounded-xl border flex flex-col items-center gap-3" data-skill="Vue.js">
+                            <i class="fab fa-vuejs text-3xl text-cyan-400"></i>
+                            <span class="font-medium">Vue.js</span>
+                            <span class="text-xs text-text-muted">响应式框架</span>
+                        </button>
+                        <button class="skill-card cat-cyan p-6 rounded-xl border flex flex-col items-center gap-3" data-skill="React">
+                            <i class="fab fa-react text-3xl text-cyan-400"></i>
+                            <span class="font-medium">React</span>
+                            <span class="text-xs text-text-muted">组件化开发</span>
+                        </button>
+                        <button class="skill-card cat-cyan p-6 rounded-xl border flex flex-col items-center gap-3" data-skill="Node.js">
+                            <i class="fab fa-node-js text-3xl text-cyan-400"></i>
+                            <span class="font-medium">Node.js</span>
+                            <span class="text-xs text-text-muted">服务端JS</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="fade-in">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center">
+                            <i class="fab fa-linux text-purple-400"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold">运维与工具</h3>
+                            <p class="text-sm text-text-muted">系统运维与开发工具</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <button class="skill-card cat-purple p-6 rounded-xl border flex flex-col items-center gap-3" data-skill="Linux">
+                            <i class="fab fa-linux text-3xl text-purple-400"></i>
+                            <span class="font-medium">Linux</span>
+                            <span class="text-xs text-text-muted">Shell脚本</span>
+                        </button>
+                        <button class="skill-card cat-purple p-6 rounded-xl border flex flex-col items-center gap-3" data-skill="Docker">
+                            <i class="fab fa-docker text-3xl text-purple-400"></i>
+                            <span class="font-medium">Docker</span>
+                            <span class="text-xs text-text-muted">容器化部署</span>
+                        </button>
+                        <button class="skill-card cat-purple p-6 rounded-xl border flex flex-col items-center gap-3" data-skill="Git">
+                            <i class="fab fa-git-alt text-3xl text-purple-400"></i>
+                            <span class="font-medium">Git</span>
+                            <span class="text-xs text-text-muted">版本控制</span>
+                        </button>
+                        <button class="skill-card cat-purple p-6 rounded-xl border flex flex-col items-center gap-3" data-skill="网络">
+                            <i class="fas fa-network-wired text-3xl text-purple-400"></i>
+                            <span class="font-medium">计算机网络</span>
+                            <span class="text-xs text-text-muted">TCP/IP</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact" class="py-16 px-6 border-t border-white/5">
+        <div class="max-w-6xl mx-auto">
+            <div class="glass-card p-8 md:p-12">
+                <div class="text-center mb-10">
+                    <h3 class="text-2xl font-semibold mb-2">联系我</h3>
+                    <p class="text-text-secondary">期待与您的交流</p>
+                </div>
+                
+                <div class="flex flex-wrap justify-center gap-8">
+                    <a href="#" class="flex items-center gap-3 px-5 py-3 rounded-xl glass-card hover:scale-105 transition-transform group">
+                        <div class="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center group-hover:bg-blue-500/30 transition-colors">
+                            <i class="fas fa-envelope text-blue-400"></i>
+                        </div>
+                        <span class="text-text-secondary group-hover:text-text-primary transition-colors">请看您手里的A4纸</span>
+                    </a>
+                    
+                    <a href="#" class="flex items-center gap-3 px-5 py-3 rounded-xl glass-card hover:scale-105 transition-transform group">
+                        <div class="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center group-hover:bg-green-500/30 transition-colors">
+                            <i class="fas fa-phone text-green-400"></i>
+                        </div>
+                        <span class="text-text-secondary group-hover:text-text-primary transition-colors">请看您手里的A4纸</span>
+                    </a>
+                    
+                    <a href="#" class="flex items-center gap-3 px-5 py-3 rounded-xl glass-card hover:scale-105 transition-transform group">
+                        <div class="w-10 h-10 rounded-lg bg-gray-500/20 flex items-center justify-center group-hover:bg-gray-500/30 transition-colors">
+                            <i class="fab fa-github text-gray-400"></i>
+                        </div>
+                        <span class="text-text-secondary group-hover:text-text-primary transition-colors">GitHub</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="text-center mt-8 text-text-muted text-sm">
+                <p>© 2026 赖伟平 · 个人简历</p>
+            </div>
+        </div>
+    </footer>
+
+    <div id="transition-overlay" class="transition-overlay"></div>
+
+    <script src="js/app.js"></script>
+    <script src="js/demo.js"></script>
+    <script src="js/glow.js"></script>
+    <script src="js/visitor.js"></script>
+</body>
+</html>

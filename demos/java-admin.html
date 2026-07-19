@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>企业级后台管理系统 - Java Spring Boot</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --secondary: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #0f172a;
+            --dark-light: #1e293b;
+            --dark-lighter: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border: rgba(255,255,255,0.08);
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background: var(--dark);
+            color: var(--text-primary);
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+        }
+        
+        .login-page {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: linear-gradient(135deg, var(--dark) 0%, #1a1d35 100%);
+        }
+        
+        .login-card {
+            background: rgba(30, 41, 59, 0.9);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 48px;
+            width: 400px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.5s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .login-card h2 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .login-card p {
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(51, 65, 85, 0.5);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(51, 65, 85, 0.8);
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+        }
+        
+        .btn-success {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-success:hover {
+            background: rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-warning {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+        
+        .btn-warning:hover {
+            background: rgba(245, 158, 11, 0.3);
+        }
+        
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        
+        .btn-danger:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
+        
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+        
+        .admin-layout {
+            display: flex;
+            height: 100vh;
+            display: none;
+        }
+        
+        .sidebar {
+            width: 260px;
+            background: var(--dark-light);
+            border-right: 1px solid var(--border);
+            padding: 24px;
+            flex-shrink: 0;
+        }
+        
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 24px;
+        }
+        
+        .sidebar-header .logo {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .sidebar-header h1 {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        
+        .nav-item:hover {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--text-primary);
+        }
+        
+        .nav-item.active {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--primary);
+            border-left: 3px solid var(--primary);
+        }
+        
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px;
+            background: var(--dark-light);
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 16px;
+            background: rgba(51, 65, 85, 0.5);
+            border-radius: 12px;
+        }
+        
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .content-area {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+            background: var(--dark);
+        }
+        
+        .page-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .page-title h2 {
+            font-size: 24px;
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+        
+        .stat-card {
+            background: var(--dark-light);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .stat-card .icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-bottom: 16px;
+        }
+        
+        .stat-card .icon.blue { background: rgba(59, 130, 246, 0.2); color: var(--primary); }
+        .stat-card .icon.green { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+        .stat-card .icon.orange { background: rgba(249, 115, 22, 0.2); color: var(--warning); }
+        .stat-card .icon.purple { background: rgba(139, 92, 246, 0.2); color: #a78bfa; }
+        
+        .stat-card .value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        
+        .stat-card .label {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        
+        .data-table {
+            background: var(--dark-light);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            width: 100%;
+        }
+        
+        .table-header {
+            display: grid;
+            grid-template-columns: 60px 150px 150px 120px 120px 100px 150px;
+            padding: 16px 20px;
+            background: rgba(51, 65, 85, 0.5);
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .table-row {
+            display: grid;
+            grid-template-columns: 60px 150px 150px 120px 120px 100px 150px;
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border);
+            align-items: center;
+            font-size: 14px;
+            transition: background 0.3s ease;
+        }
+        
+        .table-row:hover {
+            background: rgba(51, 65, 85, 0.3);
+        }
+        
+        .table-row:last-child {
+            border-bottom: none;
+        }
+        
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .badge.active { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+        .badge.inactive { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+        .badge.admin { background: rgba(139, 92, 246, 0.2); color: #a78bfa; }
+        .badge.user { background: rgba(59, 130, 246, 0.2); color: var(--primary); }
+        
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal {
+            background: var(--dark-light);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 32px;
+            width: 500px;
+            max-width: 90%;
+            animation: modalIn 0.3s ease-out;
+        }
+        
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        .modal h3 {
+            font-size: 20px;
+            margin: 0 0 24px 0;
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        
+        .chart-container {
+            background: var(--dark-light);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        
+        .chart-header h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+        
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 20px;
+            height: 200px;
+            padding-top: 20px;
+        }
+        
+        .chart-bar {
+            flex: 1;
+            background: linear-gradient(180deg, var(--primary), var(--primary-dark));
+            border-radius: 8px 8px 0 0;
+            position: relative;
+            transition: height 0.5s ease;
+        }
+        
+        .chart-bar::before {
+            content: attr(data-value);
+            position: absolute;
+            top: -28px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .chart-bar-label {
+            text-align: center;
+            margin-top: 8px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        
+        .role-switcher {
+            display: flex;
+            gap: 8px;
+            padding: 4px;
+            background: rgba(51, 65, 85, 0.5);
+            border-radius: 10px;
+        }
+        
+        .role-option {
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .role-option.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .role-option:not(.active) {
+            color: var(--text-secondary);
+        }
+        
+        .role-option:not(.active):hover {
+            background: rgba(51, 65, 85, 0.8);
+        }
+        
+        .permission-note {
+            font-size: 12px;
+            color: var(--warning);
+            margin-top: 8px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+        
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .search-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .search-bar input {
+            flex: 1;
+            padding: 10px 16px;
+            background: var(--dark-light);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+        
+        .search-bar input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .export-btn {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .export-btn:hover {
+            background: rgba(16, 185, 129, 0.3);
+        }
+        
+        .breadcrumb {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+        
+        .breadcrumb a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        
+        .loading-spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid rgba(59, 130, 246, 0.2);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            z-index: 2000;
+            animation: slideRight 0.3s ease-out;
+        }
+        
+        @keyframes slideRight {
+            from { opacity: 0; transform: translateX(100px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .notification.success { background: rgba(16, 185, 129, 0.9); color: white; }
+        .notification.error { background: rgba(239, 68, 68, 0.9); color: white; }
+        .notification.info { background: rgba(59, 130, 246, 0.9); color: white; }
+    </style>
+</head>
+<body>
+    <div class="login-page" id="loginPage">
+        <div class="login-card">
+            <h2>企业级后台管理系统</h2>
+            <p>基于 Java Spring Boot 构建</p>
+            
+            <div class="form-group">
+                <label>用户名</label>
+                <input type="text" id="username" placeholder="请输入用户名" value="visitor">
+            </div>
+            
+            <div class="form-group">
+                <label>密码</label>
+                <input type="password" id="password" placeholder="请输入密码" value="visitor123">
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-secondary); cursor: pointer;">
+                    <input type="checkbox" checked> 记住我
+                </label>
+                <a href="#" style="font-size: 13px; color: var(--primary);">忘记密码？</a>
+            </div>
+            
+            <button class="btn btn-primary" onclick="handleLogin()">
+                <i class="fas fa-sign-in-alt"></i> 登录系统
+            </button>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <span style="font-size: 12px; color: var(--text-secondary);">
+                    访客账号：visitor / visitor123 | 管理员账号：admin / admin123
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="admin-layout" id="adminLayout">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">JB</div>
+                <h1>Java Admin</h1>
+            </div>
+            
+            <div class="nav-item active" onclick="navigateTo('dashboard')">
+                <i class="fas fa-chart-line"></i>
+                <span>仪表盘</span>
+            </div>
+            
+            <div class="nav-item" onclick="navigateTo('users')">
+                <i class="fas fa-users"></i>
+                <span>用户管理</span>
+            </div>
+            
+            <div class="nav-item" onclick="navigateTo('roles')">
+                <i class="fas fa-shield-alt"></i>
+                <span>角色权限</span>
+            </div>
+            
+            <div class="nav-item" onclick="navigateTo('reports')">
+                <i class="fas fa-file-excel"></i>
+                <span>报表中心</span>
+            </div>
+            
+            <div class="nav-item" onclick="navigateTo('settings')">
+                <i class="fas fa-cog"></i>
+                <span>系统设置</span>
+            </div>
+            
+            <div style="margin-top: auto; padding-top: 24px; border-top: 1px solid var(--border);">
+                <div class="nav-item" onclick="handleLogout()" style="color: var(--danger);">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>退出登录</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="header">
+                <div class="header-left">
+                    <button onclick="toggleSidebar()" style="background: none; border: none; color: var(--text-secondary); cursor: pointer;">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <span id="currentPageTitle" style="font-size: 16px; font-weight: 600;">仪表盘</span>
+                </div>
+                
+                <div class="header-right">
+                    <div class="role-switcher">
+                        <div class="role-option" id="roleVisitor" onclick="switchRole('visitor')">访客</div>
+                        <div class="role-option active" id="roleAdmin" onclick="switchRole('admin')">管理员</div>
+                    </div>
+                    <div class="user-info">
+                        <div class="user-avatar" id="userAvatar">V</div>
+                        <div>
+                            <div id="userName" style="font-size: 14px; font-weight: 600;">访客用户</div>
+                            <div id="userRole" style="font-size: 12px; color: var(--text-secondary);">只读权限</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="content-area" id="contentArea">
+                <div class="loading-overlay" id="loadingOverlay">
+                    <div class="loading-spinner"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="userModal">
+        <div class="modal">
+            <h3 id="modalTitle">添加用户</h3>
+            <form id="userForm">
+                <input type="hidden" id="userId">
+                <div class="form-group">
+                    <label>用户名</label>
+                    <input type="text" id="formUsername" required>
+                </div>
+                <div class="form-group">
+                    <label>邮箱</label>
+                    <input type="email" id="formEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>角色</label>
+                    <select id="formRole" style="width: 100%; padding: 12px 16px; background: rgba(51,65,85,0.5); border: 1px solid var(--border); border-radius: 12px; color: var(--text-primary);">
+                        <option value="user">普通用户</option>
+                        <option value="admin">管理员</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>状态</label>
+                    <select id="formStatus" style="width: 100%; padding: 12px 16px; background: rgba(51,65,85,0.5); border: 1px solid var(--border); border-radius: 12px; color: var(--text-primary);">
+                        <option value="active">启用</option>
+                        <option value="inactive">禁用</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-warning" onclick="closeModal()">取消</button>
+                    <button type="submit" class="btn btn-success">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let currentRole = 'visitor';
+        let users = [];
+        
+        function initData() {
+            const saved = localStorage.getItem('admin_users');
+            if (saved) {
+                users = JSON.parse(saved);
+            } else {
+                users = [
+                    { id: 1, username: 'admin', email: 'admin@example.com', role: 'admin', status: 'active', createdAt: '2024-01-10', lastLogin: '2024-01-15 10:30' },
+                    { id: 2, username: 'visitor', email: 'visitor@example.com', role: 'user', status: 'active', createdAt: '2024-01-12', lastLogin: '2024-01-15 09:15' },
+                    { id: 3, username: '张三', email: 'zhangsan@example.com', role: 'user', status: 'active', createdAt: '2024-01-08', lastLogin: '2024-01-14 14:20' },
+                    { id: 4, username: '李四', email: 'lisi@example.com', role: 'user', status: 'active', createdAt: '2024-01-06', lastLogin: '2024-01-13 16:45' },
+                    { id: 5, username: '王五', email: 'wangwu@example.com', role: 'user', status: 'inactive', createdAt: '2024-01-05', lastLogin: '2024-01-10 11:00' },
+                    { id: 6, username: '赵六', email: 'zhaoliu@example.com', role: 'user', status: 'active', createdAt: '2024-01-03', lastLogin: '2024-01-12 08:30' }
+                ];
+                saveUsers();
+            }
+        }
+        
+        function saveUsers() {
+            localStorage.setItem('admin_users', JSON.stringify(users));
+        }
+        
+        function handleLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if ((username === 'admin' && password === 'admin123') || 
+                (username === 'visitor' && password === 'visitor123')) {
+                
+                currentUser = { username, role: username === 'admin' ? 'admin' : 'user' };
+                currentRole = username === 'admin' ? 'admin' : 'visitor';
+                
+                document.getElementById('loginPage').style.display = 'none';
+                document.getElementById('adminLayout').style.display = 'flex';
+                
+                updateUserInfo();
+                navigateTo('dashboard');
+                
+                showNotification('登录成功！', 'success');
+            } else {
+                showNotification('用户名或密码错误', 'error');
+            }
+        }
+        
+        function handleLogout() {
+            currentUser = null;
+            currentRole = 'visitor';
+            document.getElementById('adminLayout').style.display = 'none';
+            document.getElementById('loginPage').style.display = 'flex';
+            showNotification('已退出登录', 'info');
+        }
+        
+        function switchRole(role) {
+            currentRole = role;
+            document.getElementById('roleVisitor').classList.toggle('active', role === 'visitor');
+            document.getElementById('roleAdmin').classList.toggle('active', role === 'admin');
+            
+            updateUserInfo();
+            
+            if (role === 'visitor') {
+                showNotification('已切换为访客模式，部分功能受限', 'info');
+            } else {
+                showNotification('已切换为管理员模式，拥有全部权限', 'success');
+            }
+            
+            navigateTo(currentPage);
+        }
+        
+        function updateUserInfo() {
+            const userName = document.getElementById('userName');
+            const userRole = document.getElementById('userRole');
+            const userAvatar = document.getElementById('userAvatar');
+            
+            if (currentRole === 'admin') {
+                userName.textContent = '管理员';
+                userRole.textContent = '全部权限';
+                userAvatar.textContent = 'A';
+            } else {
+                userName.textContent = '访客用户';
+                userRole.textContent = '只读权限';
+                userAvatar.textContent = 'V';
+            }
+        }
+        
+        let currentPage = 'dashboard';
+        
+        function navigateTo(page) {
+            currentPage = page;
+            
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            const navItems = {
+                'dashboard': 0,
+                'users': 1,
+                'roles': 2,
+                'reports': 3,
+                'settings': 4
+            };
+            document.querySelectorAll('.nav-item')[navItems[page]].classList.add('active');
+            
+            const titles = {
+                'dashboard': '仪表盘',
+                'users': '用户管理',
+                'roles': '角色权限',
+                'reports': '报表中心',
+                'settings': '系统设置'
+            };
+            document.getElementById('currentPageTitle').textContent = titles[page];
+            
+            renderPage(page);
+        }
+        
+        function renderPage(page) {
+            const content = document.getElementById('contentArea');
+            const loading = document.getElementById('loadingOverlay');
+            
+            loading.style.display = 'flex';
+            
+            setTimeout(() => {
+                loading.style.display = 'none';
+                
+                switch(page) {
+                    case 'dashboard': renderDashboard(content); break;
+                    case 'users': renderUsers(content); break;
+                    case 'roles': renderRoles(content); break;
+                    case 'reports': renderReports(content); break;
+                    case 'settings': renderSettings(content); break;
+                }
+            }, 300);
+        }
+        
+        function renderDashboard(content) {
+            const stats = {
+                totalUsers: users.length,
+                activeUsers: users.filter(u => u.status === 'active').length,
+                adminUsers: users.filter(u => u.role === 'admin').length,
+                avgLogin: '12次/日'
+            };
+            
+            content.innerHTML = `
+                <div class="breadcrumb">首页 / 仪表盘</div>
+                <div class="page-title">
+                    <h2>数据概览</h2>
+                    <span style="font-size: 13px; color: var(--text-secondary);">实时数据更新</span>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="icon blue"><i class="fas fa-users"></i></div>
+                        <div class="value">${stats.totalUsers}</div>
+                        <div class="label">总用户数</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="icon green"><i class="fas fa-check-circle"></i></div>
+                        <div class="value">${stats.activeUsers}</div>
+                        <div class="label">活跃用户</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="icon orange"><i class="fas fa-shield-alt"></i></div>
+                        <div class="value">${stats.adminUsers}</div>
+                        <div class="label">管理员</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="icon purple"><i class="fas fa-chart-bar"></i></div>
+                        <div class="value">${stats.avgLogin}</div>
+                        <div class="label">日均登录</div>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3>本周活跃用户趋势</h3>
+                        <div style="display: flex; gap: 8px;">
+                            <span class="badge active">活跃</span>
+                            <span class="badge inactive">非活跃</span>
+                        </div>
+                    </div>
+                    <div class="chart-bars">
+                        <div>
+                            <div class="chart-bar" data-value="45" style="height: 60%;"></div>
+                            <div class="chart-bar-label">周一</div>
+                        </div>
+                        <div>
+                            <div class="chart-bar" data-value="58" style="height: 77%;"></div>
+                            <div class="chart-bar-label">周二</div>
+                        </div>
+                        <div>
+                            <div class="chart-bar" data-value="42" style="height: 56%;"></div>
+                            <div class="chart-bar-label">周三</div>
+                        </div>
+                        <div>
+                            <div class="chart-bar" data-value="75" style="height: 100%;"></div>
+                            <div class="chart-bar-label">周四</div>
+                        </div>
+                        <div>
+                            <div class="chart-bar" data-value="63" style="height: 84%;"></div>
+                            <div class="chart-bar-label">周五</div>
+                        </div>
+                        <div>
+                            <div class="chart-bar" data-value="38" style="height: 51%;"></div>
+                            <div class="chart-bar-label">周六</div>
+                        </div>
+                        <div>
+                            <div class="chart-bar" data-value="25" style="height: 33%;"></div>
+                            <div class="chart-bar-label">周日</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="data-table">
+                    <div style="display: grid; grid-template-columns: 60px 150px 150px 120px 150px; padding: 16px 20px; background: rgba(51,65,85,0.5); font-size: 13px; font-weight: 600; color: var(--text-secondary);">
+                        <span>ID</span>
+                        <span>用户名</span>
+                        <span>邮箱</span>
+                        <span>状态</span>
+                        <span>最后登录</span>
+                    </div>
+                    ${users.slice(0, 5).map(u => `
+                        <div style="display: grid; grid-template-columns: 60px 150px 150px 120px 150px; padding: 14px 20px; border-bottom: 1px solid var(--border); align-items: center; font-size: 14px;">
+                            <span>${u.id}</span>
+                            <span>${u.username}</span>
+                            <span>${u.email}</span>
+                            <span><span class="badge ${u.status}">${u.status === 'active' ? '启用' : '禁用'}</span></span>
+                            <span>${u.lastLogin}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        function renderUsers(content) {
+            content.innerHTML = `
+                <div class="breadcrumb">首页 / 用户管理</div>
+                <div class="page-title">
+                    <h2>用户列表</h2>
+                    ${currentRole === 'admin' ? '<button class="btn btn-success" onclick="openAddUserModal()" style="margin-left: auto;">添加用户</button>' : ''}
+                </div>
+                ${currentRole === 'visitor' ? '<div class="permission-note"><i class="fas fa-info-circle"></i> 访客模式：仅查看权限，无法修改</div>' : ''}
+                <div class="search-bar">
+                    <input type="text" id="userSearch" placeholder="搜索用户名或邮箱..." oninput="filterUsers()">
+                    ${currentRole === 'admin' ? '<button class="export-btn" onclick="exportUsers()"><i class="fas fa-download"></i> 导出CSV</button>' : ''}
+                </div>
+                <div class="data-table">
+                    <div class="table-header">
+                        <span>ID</span>
+                        <span>用户名</span>
+                        <span>邮箱</span>
+                        <span>角色</span>
+                        <span>状态</span>
+                        <span>创建时间</span>
+                        <span>操作</span>
+                    </div>
+                    <div id="userTableBody">
+                        ${users.map(u => `
+                            <div class="table-row">
+                                <span>${u.id}</span>
+                                <span>${u.username}</span>
+                                <span>${u.email}</span>
+                                <span><span class="badge ${u.role === 'admin' ? 'admin' : 'user'}">${u.role === 'admin' ? '管理员' : '用户'}</span></span>
+                                <span><span class="badge ${u.status}">${u.status === 'active' ? '启用' : '禁用'}</span></span>
+                                <span>${u.createdAt}</span>
+                                <span class="action-buttons">
+                                    ${currentRole === 'admin' ? `
+                                        <button class="btn btn-sm btn-success" onclick="editUser(${u.id})"><i class="fas fa-edit"></i></button>
+                                        <button class="btn btn-sm btn-danger" onclick="deleteUser(${u.id})"><i class="fas fa-trash"></i></button>
+                                    ` : '<span style="font-size: 12px; color: var(--text-muted);">只读</span>'}
+                                </span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+        
+        function filterUsers() {
+            const search = document.getElementById('userSearch').value.toLowerCase();
+            const filtered = users.filter(u => 
+                u.username.toLowerCase().includes(search) || 
+                u.email.toLowerCase().includes(search)
+            );
+            
+            const tbody = document.getElementById('userTableBody');
+            tbody.innerHTML = filtered.map(u => `
+                <div class="table-row">
+                    <span>${u.id}</span>
+                    <span>${u.username}</span>
+                    <span>${u.email}</span>
+                    <span><span class="badge ${u.role === 'admin' ? 'admin' : 'user'}">${u.role === 'admin' ? '管理员' : '用户'}</span></span>
+                    <span><span class="badge ${u.status}">${u.status === 'active' ? '启用' : '禁用'}</span></span>
+                    <span>${u.createdAt}</span>
+                    <span class="action-buttons">
+                        ${currentRole === 'admin' ? `
+                            <button class="btn btn-sm btn-success" onclick="editUser(${u.id})"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteUser(${u.id})"><i class="fas fa-trash"></i></button>
+                        ` : '<span style="font-size: 12px; color: var(--text-muted);">只读</span>'}
+                    </span>
+                </div>
+            `).join('');
+        }
+        
+        function openAddUserModal() {
+            document.getElementById('modalTitle').textContent = '添加用户';
+            document.getElementById('userId').value = '';
+            document.getElementById('formUsername').value = '';
+            document.getElementById('formEmail').value = '';
+            document.getElementById('formRole').value = 'user';
+            document.getElementById('formStatus').value = 'active';
+            document.getElementById('userModal').classList.add('active');
+        }
+        
+        function editUser(id) {
+            const user = users.find(u => u.id === id);
+            if (!user) return;
+            
+            document.getElementById('modalTitle').textContent = '编辑用户';
+            document.getElementById('userId').value = user.id;
+            document.getElementById('formUsername').value = user.username;
+            document.getElementById('formEmail').value = user.email;
+            document.getElementById('formRole').value = user.role;
+            document.getElementById('formStatus').value = user.status;
+            document.getElementById('userModal').classList.add('active');
+        }
+        
+        function closeModal() {
+            document.getElementById('userModal').classList.remove('active');
+        }
+        
+        document.getElementById('userForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const id = document.getElementById('userId').value;
+            const username = document.getElementById('formUsername').value;
+            const email = document.getElementById('formEmail').value;
+            const role = document.getElementById('formRole').value;
+            const status = document.getElementById('formStatus').value;
+            
+            if (id) {
+                const index = users.findIndex(u => u.id === parseInt(id));
+                if (index !== -1) {
+                    users[index] = { ...users[index], username, email, role, status };
+                    showNotification('用户更新成功', 'success');
+                }
+            } else {
+                const newId = Math.max(...users.map(u => u.id)) + 1;
+                users.push({
+                    id: newId,
+                    username,
+                    email,
+                    role,
+                    status,
+                    createdAt: new Date().toISOString().split('T')[0],
+                    lastLogin: 'N/A'
+                });
+                showNotification('用户添加成功', 'success');
+            }
+            
+            saveUsers();
+            closeModal();
+            renderUsers(document.getElementById('contentArea'));
+        });
+        
+        function deleteUser(id) {
+            if (confirm('确定要删除该用户吗？')) {
+                users = users.filter(u => u.id !== id);
+                saveUsers();
+                renderUsers(document.getElementById('contentArea'));
+                showNotification('用户删除成功', 'success');
+            }
+        }
+        
+        function exportUsers() {
+            const headers = ['ID', '用户名', '邮箱', '角色', '状态', '创建时间'];
+            const rows = users.map(u => [u.id, u.username, u.email, u.role === 'admin' ? '管理员' : '用户', u.status === 'active' ? '启用' : '禁用', u.createdAt]);
+            
+            const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+            const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `users_${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+            
+            showNotification('导出成功', 'success');
+        }
+        
+        function renderRoles(content) {
+            const roles = [
+                { name: '管理员', permissions: ['用户管理', '角色管理', '数据导出', '系统设置', '日志查看'], count: users.filter(u => u.role === 'admin').length },
+                { name: '普通用户', permissions: ['查看数据', '个人设置'], count: users.filter(u => u.role === 'user').length }
+            ];
+            
+            content.innerHTML = `
+                <div class="breadcrumb">首页 / 角色权限</div>
+                <div class="page-title">
+                    <h2>角色管理</h2>
+                </div>
+                ${currentRole === 'visitor' ? '<div class="permission-note"><i class="fas fa-info-circle"></i> 访客模式：仅查看权限</div>' : ''}
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+                    ${roles.map((role, idx) => `
+                        <div class="stat-card" style="padding: 28px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                <div>
+                                    <h3 style="font-size: 18px; margin: 0;">${role.name}</h3>
+                                    <p style="font-size: 12px; color: var(--text-secondary);">${role.count} 位用户</p>
+                                </div>
+                                <div class="icon ${idx === 0 ? 'purple' : 'blue'}" style="width: 56px; height: 56px;"><i class="fas fa-shield-alt"></i></div>
+                            </div>
+                            <div>
+                                <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 12px;">权限列表：</p>
+                                <div style="display: flex; flex-wrap: gap: 8px;">
+                                    ${role.permissions.map(p => `<span class="badge ${idx === 0 ? 'admin' : 'user'}">${p}</span>`).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3>角色分布</h3>
+                    </div>
+                    <div style="display: flex; gap: 30px; justify-content: center;">
+                        ${roles.map((role, idx) => `
+                            <div style="text-align: center;">
+                                <div style="width: 120px; height: 120px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; margin-bottom: 12px; ${idx === 0 ? 'background: conic-gradient(#a78bfa 0deg, #a78bfa ' + (role.count/users.length*360) + 'deg, rgba(51,65,85,0.5) ' + (role.count/users.length*360) + 'deg, rgba(51,65,85,0.5) 360deg);' : 'background: conic-gradient(#3b82f6 0deg, #3b82f6 ' + (role.count/users.length*360) + 'deg, rgba(51,65,85,0.5) ' + (role.count/users.length*360) + 'deg, rgba(51,65,85,0.5) 360deg);'}">
+                                    <span style="width: 80px; height: 80px; border-radius: 50%; background: var(--dark-light); display: flex; align-items: center; justify-content: center;">${Math.round(role.count/users.length*100)}%</span>
+                                </div>
+                                <div style="font-size: 14px; font-weight: 600;">${role.name}</div>
+                                <div style="font-size: 12px; color: var(--text-secondary);">${role.count} 人</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+        
+        function renderReports(content) {
+            content.innerHTML = `
+                <div class="breadcrumb">首页 / 报表中心</div>
+                <div class="page-title">
+                    <h2>数据报表</h2>
+                    ${currentRole === 'admin' ? '<button class="export-btn" onclick="exportAllReports()" style="margin-left: auto;"><i class="fas fa-download"></i> 导出全部</button>' : ''}
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="icon blue"><i class="fas fa-file-excel"></i></div>
+                        <div class="value">12</div>
+                        <div class="label">本月报表</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="icon green"><i class="fas fa-chart-pie"></i></div>
+                        <div class="value">8</div>
+                        <div class="label">已导出</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="icon orange"><i class="fas fa-clock"></i></div>
+                        <div class="value">4</div>
+                        <div class="label">待处理</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="icon purple"><i class="fas fa-eye"></i></div>
+                        <div class="value">156</div>
+                        <div class="label">总浏览次数</div>
+                    </div>
+                </div>
+                <div class="data-table">
+                    <div class="table-header">
+                        <span>报表名称</span>
+                        <span>类型</span>
+                        <span>创建时间</span>
+                        <span>状态</span>
+                        <span>操作</span>
+                    </div>
+                    ${['用户统计报表', '销售数据分析', '系统日志报告', '权限审计报告', '月度运营报告', '年度汇总报表'].map((name, i) => `
+                        <div class="table-row">
+                            <span>${name}</span>
+                            <span><span class="badge ${i % 2 === 0 ? 'admin' : 'user'}">${i % 2 === 0 ? 'Excel' : 'PDF'}</span></span>
+                            <span>2024-01-${10 + i}</span>
+                            <span><span class="badge active">已生成</span></span>
+                            <span class="action-buttons">
+                                <button class="btn btn-sm btn-success" onclick="showNotification('${name}正在下载...', 'info')"><i class="fas fa-download"></i></button>
+                                <button class="btn btn-sm btn-warning" onclick="showNotification('${name}预览功能开发中', 'info')"><i class="fas fa-eye"></i></button>
+                            </span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        function exportAllReports() {
+            showNotification('正在打包导出，请稍候...', 'info');
+            setTimeout(() => {
+                showNotification('全部报表导出成功', 'success');
+            }, 1500);
+        }
+        
+        function renderSettings(content) {
+            content.innerHTML = `
+                <div class="breadcrumb">首页 / 系统设置</div>
+                <div class="page-title">
+                    <h2>系统配置</h2>
+                </div>
+                ${currentRole === 'visitor' ? '<div class="permission-note"><i class="fas fa-info-circle"></i> 访客模式：无法修改系统设置</div>' : ''}
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+                    <div class="stat-card" style="padding: 28px;">
+                        <h3 style="font-size: 16px; margin: 0 0 20px 0;">系统信息</h3>
+                        <div style="space-y-4">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                                <span style="color: var(--text-secondary);">系统版本</span>
+                                <span>v2.1.0</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                                <span style="color: var(--text-secondary);">运行环境</span>
+                                <span>Production</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                                <span style="color: var(--text-secondary);">Java版本</span>
+                                <span>21</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                                <span style="color: var(--text-secondary);">Spring Boot</span>
+                                <span>3.2.x</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                                <span style="color: var(--text-secondary);">数据库</span>
+                                <span>MySQL 8.0</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: var(--text-secondary);">运行时间</span>
+                                <span>12d 8h 32m</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-card" style="padding: 28px;">
+                        <h3 style="font-size: 16px; margin: 0 0 20px 0;">安全设置</h3>
+                        <div style="space-y-4">
+                            ${['登录失败锁定', '密码复杂度要求', '会话超时', '双因素认证', 'IP白名单'].map((item, i) => `
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                    <span>${item}</span>
+                                    ${currentRole === 'admin' ? `
+                                        <label style="width: 48px; height: 24px; background: ${i % 2 === 0 ? '#10b981' : '#64748b'}; border-radius: 12px; position: relative; cursor: pointer;">
+                                            <span style="position: absolute; top: 2px; left: ${i % 2 === 0 ? '26px' : '2px'}; width: 20px; height: 20px; background: white; border-radius: 50%; transition: left 0.3s ease;"></span>
+                                        </label>
+                                    ` : '<span style="color: var(--text-muted);">已启用</span>'}
+                                </div>
+                            `).join('')}
+                        </div>
+                        ${currentRole === 'admin' ? '<button class="btn btn-primary" style="width: 100%; margin-top: 20px;" onclick="saveSettings()"><i class="fas fa-save"></i> 保存设置</button>' : ''}
+                    </div>
+                </div>
+            `;
+        }
+        
+        function saveSettings() {
+            showNotification('设置已保存', 'success');
+        }
+        
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'times-circle' : 'info-circle'}"></i> ${message}`;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100px)';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+        
+        initData();
+    </script>
+</body>
+</html>
