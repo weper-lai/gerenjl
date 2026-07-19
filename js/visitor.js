@@ -1,5 +1,5 @@
-const SUPABASE_URL = 'YOUR_SUPABASE_URL';
-const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+const SUPABASE_URL = 'https://nfikngtirtqgxtihkous.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_MVKHL8LctqsdEbkaBM4_cQ_UnfyGhkO';
 
 let supabase = null;
 
@@ -53,10 +53,9 @@ async function trackVisitor() {
         
         const { data: totalData, error: totalError } = await supabase
             .from('visitor_stats')
-            .select('visit_count')
-            .sum('visit_count');
+            .select('visit_count');
         
-        const totalVisitors = totalData && totalData[0]?.visit_count ? parseInt(totalData[0].visit_count) : 0;
+        const totalVisitors = totalData ? totalData.reduce((sum, row) => sum + (row.visit_count || 0), 0) : 0;
         
         updateVisitorDisplay({ totalVisitors });
     } catch (error) {

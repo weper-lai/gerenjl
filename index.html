@@ -77,17 +77,17 @@
                 </div>
                 
                 <div class="mt-8">
-                    <div id="visitor-badge" class="flex items-center justify-center gap-3 px-6 py-3 rounded-xl glass-card">
-                        <i class="fas fa-users text-blue-400"></i>
+                    <div id="visitor-badge" class="flex flex-wrap items-center justify-center gap-2 px-4 py-3 rounded-xl glass-card text-sm">
+                        <i class="fas fa-eye text-blue-400"></i>
                         <span class="text-text-muted">您是第</span>
-                        <span id="visitor-number" class="text-2xl font-bold text-blue-400">--</span>
-                        <span class="text-text-muted">位访问者</span>
+                        <span id="visitor-number" class="text-xl md:text-2xl font-bold text-blue-400">--</span>
+                        <span class="text-text-muted">位看到这个网站的人</span>
                     </div>
                 </div>
             </div>
             
             <div class="relative fade-in">
-                <div class="relative w-80 h-80 mx-auto">
+                <div class="relative w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 mx-auto">
                     <div class="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-full blur-3xl"></div>
                     
                     <div class="absolute inset-4 rounded-full overflow-hidden border-2 border-white/10 bg-white/5">
@@ -99,9 +99,8 @@
                         
                         <img id="photo-container" src="lwp.jpg" alt="赖伟平" class="w-full h-full object-cover reveal-trigger">
                         
-                        <div id="sad-container" class="absolute inset-0 flex flex-col items-center justify-center text-text-muted opacity-0 transition-opacity">
-                            <span class="text-6xl mb-2">😢</span>
-                            <span class="text-sm">伤心表情包</span>
+                        <div id="sad-container" class="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity">
+                            <img src="sad.jpeg" alt="伤心" class="w-full h-full object-cover rounded-full">
                         </div>
                     </div>
                     
@@ -138,24 +137,24 @@
                         </div>
                     </div>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <button class="skill-card cat-blue p-6 rounded-xl border flex flex-col items-center gap-3" data-skill="Java">
-                            <i class="fab fa-java text-3xl text-blue-400"></i>
-                            <span class="font-medium">Java</span>
+                        <button class="skill-card cat-blue p-4 sm:p-6 rounded-xl border flex flex-col items-center gap-2 sm:gap-3" data-skill="Java">
+                            <i class="fab fa-java text-2xl sm:text-3xl text-blue-400"></i>
+                            <span class="font-medium text-sm">Java</span>
                             <span class="text-xs text-text-muted">后端开发</span>
                         </button>
-                        <button class="skill-card cat-blue p-6 rounded-xl border flex flex-col items-center gap-3" data-skill="C++">
-                            <i class="fas fa-code text-3xl text-blue-400"></i>
-                            <span class="font-medium">C++</span>
+                        <button class="skill-card cat-blue p-4 sm:p-6 rounded-xl border flex flex-col items-center gap-2 sm:gap-3" data-skill="C++">
+                            <i class="fas fa-code text-2xl sm:text-3xl text-blue-400"></i>
+                            <span class="font-medium text-sm">C++</span>
                             <span class="text-xs text-text-muted">系统开发</span>
                         </button>
-                        <button class="skill-card cat-blue p-6 rounded-xl border flex flex-col items-center gap-3" data-skill="Python">
-                            <i class="fab fa-python text-3xl text-blue-400"></i>
-                            <span class="font-medium">Python</span>
+                        <button class="skill-card cat-blue p-4 sm:p-6 rounded-xl border flex flex-col items-center gap-2 sm:gap-3" data-skill="Python">
+                            <i class="fab fa-python text-2xl sm:text-3xl text-blue-400"></i>
+                            <span class="font-medium text-sm">Python</span>
                             <span class="text-xs text-text-muted">数据分析</span>
                         </button>
-                        <button class="skill-card cat-blue p-6 rounded-xl border flex flex-col items-center gap-3" data-skill="JavaScript">
-                            <i class="fab fa-js text-3xl text-blue-400"></i>
-                            <span class="font-medium">JavaScript</span>
+                        <button class="skill-card cat-blue p-4 sm:p-6 rounded-xl border flex flex-col items-center gap-2 sm:gap-3" data-skill="JavaScript">
+                            <i class="fab fa-js text-2xl sm:text-3xl text-blue-400"></i>
+                            <span class="font-medium text-sm">JavaScript</span>
                             <span class="text-xs text-text-muted">前端开发</span>
                         </button>
                     </div>
@@ -172,24 +171,24 @@
                         </div>
                     </div>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <button class="skill-card cat-orange p-6 rounded-xl border flex flex-col items-center gap-3" data-skill="MySQL">
-                            <i class="fas fa-database text-3xl text-orange-400"></i>
-                            <span class="font-medium">MySQL</span>
+                        <button class="skill-card cat-orange p-4 sm:p-6 rounded-xl border flex flex-col items-center gap-2 sm:gap-3" data-skill="MySQL">
+                            <i class="fas fa-database text-2xl sm:text-3xl text-orange-400"></i>
+                            <span class="font-medium text-sm">MySQL</span>
                             <span class="text-xs text-text-muted">关系型数据库</span>
                         </button>
-                        <button class="skill-card cat-orange p-6 rounded-xl border flex flex-col items-center gap-3" data-skill="PostgreSQL">
-                            <i class="fab fa-postgresql text-3xl text-orange-400"></i>
-                            <span class="font-medium">PostgreSQL</span>
+                        <button class="skill-card cat-orange p-4 sm:p-6 rounded-xl border flex flex-col items-center gap-2 sm:gap-3" data-skill="PostgreSQL">
+                            <i class="fab fa-postgresql text-2xl sm:text-3xl text-orange-400"></i>
+                            <span class="font-medium text-sm">PostgreSQL</span>
                             <span class="text-xs text-text-muted">高级数据库</span>
                         </button>
-                        <button class="skill-card cat-orange p-6 rounded-xl border flex flex-col items-center gap-3" data-skill="MongoDB">
-                            <i class="fas fa-leaf text-3xl text-orange-400"></i>
-                            <span class="font-medium">MongoDB</span>
+                        <button class="skill-card cat-orange p-4 sm:p-6 rounded-xl border flex flex-col items-center gap-2 sm:gap-3" data-skill="MongoDB">
+                            <i class="fas fa-leaf text-2xl sm:text-3xl text-orange-400"></i>
+                            <span class="font-medium text-sm">MongoDB</span>
                             <span class="text-xs text-text-muted">NoSQL</span>
                         </button>
-                        <button class="skill-card cat-orange p-6 rounded-xl border flex flex-col items-center gap-3" data-skill="Redis">
-                            <i class="fas fa-redo text-3xl text-orange-400"></i>
-                            <span class="font-medium">Redis</span>
+                        <button class="skill-card cat-orange p-4 sm:p-6 rounded-xl border flex flex-col items-center gap-2 sm:gap-3" data-skill="Redis">
+                            <i class="fas fa-redo text-2xl sm:text-3xl text-orange-400"></i>
+                            <span class="font-medium text-sm">Redis</span>
                             <span class="text-xs text-text-muted">缓存系统</span>
                         </button>
                     </div>
@@ -206,24 +205,24 @@
                         </div>
                     </div>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <button class="skill-card cat-cyan p-6 rounded-xl border flex flex-col items-center gap-3" data-skill="HTML/CSS">
-                            <i class="fab fa-html5 text-3xl text-cyan-400"></i>
-                            <span class="font-medium">HTML/CSS</span>
+                        <button class="skill-card cat-cyan p-4 sm:p-6 rounded-xl border flex flex-col items-center gap-2 sm:gap-3" data-skill="HTML/CSS">
+                            <i class="fab fa-html5 text-2xl sm:text-3xl text-cyan-400"></i>
+                            <span class="font-medium text-sm">HTML/CSS</span>
                             <span class="text-xs text-text-muted">页面结构</span>
                         </button>
-                        <button class="skill-card cat-cyan p-6 rounded-xl border flex flex-col items-center gap-3" data-skill="Vue.js">
-                            <i class="fab fa-vuejs text-3xl text-cyan-400"></i>
-                            <span class="font-medium">Vue.js</span>
+                        <button class="skill-card cat-cyan p-4 sm:p-6 rounded-xl border flex flex-col items-center gap-2 sm:gap-3" data-skill="Vue.js">
+                            <i class="fab fa-vuejs text-2xl sm:text-3xl text-cyan-400"></i>
+                            <span class="font-medium text-sm">Vue.js</span>
                             <span class="text-xs text-text-muted">响应式框架</span>
                         </button>
-                        <button class="skill-card cat-cyan p-6 rounded-xl border flex flex-col items-center gap-3" data-skill="React">
-                            <i class="fab fa-react text-3xl text-cyan-400"></i>
-                            <span class="font-medium">React</span>
+                        <button class="skill-card cat-cyan p-4 sm:p-6 rounded-xl border flex flex-col items-center gap-2 sm:gap-3" data-skill="React">
+                            <i class="fab fa-react text-2xl sm:text-3xl text-cyan-400"></i>
+                            <span class="font-medium text-sm">React</span>
                             <span class="text-xs text-text-muted">组件化开发</span>
                         </button>
-                        <button class="skill-card cat-cyan p-6 rounded-xl border flex flex-col items-center gap-3" data-skill="Node.js">
-                            <i class="fab fa-node-js text-3xl text-cyan-400"></i>
-                            <span class="font-medium">Node.js</span>
+                        <button class="skill-card cat-cyan p-4 sm:p-6 rounded-xl border flex flex-col items-center gap-2 sm:gap-3" data-skill="Node.js">
+                            <i class="fab fa-node-js text-2xl sm:text-3xl text-cyan-400"></i>
+                            <span class="font-medium text-sm">Node.js</span>
                             <span class="text-xs text-text-muted">服务端JS</span>
                         </button>
                     </div>
@@ -240,24 +239,24 @@
                         </div>
                     </div>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <button class="skill-card cat-purple p-6 rounded-xl border flex flex-col items-center gap-3" data-skill="Linux">
-                            <i class="fab fa-linux text-3xl text-purple-400"></i>
-                            <span class="font-medium">Linux</span>
+                        <button class="skill-card cat-purple p-4 sm:p-6 rounded-xl border flex flex-col items-center gap-2 sm:gap-3" data-skill="Linux">
+                            <i class="fab fa-linux text-2xl sm:text-3xl text-purple-400"></i>
+                            <span class="font-medium text-sm">Linux</span>
                             <span class="text-xs text-text-muted">Shell脚本</span>
                         </button>
-                        <button class="skill-card cat-purple p-6 rounded-xl border flex flex-col items-center gap-3" data-skill="Docker">
-                            <i class="fab fa-docker text-3xl text-purple-400"></i>
-                            <span class="font-medium">Docker</span>
+                        <button class="skill-card cat-purple p-4 sm:p-6 rounded-xl border flex flex-col items-center gap-2 sm:gap-3" data-skill="Docker">
+                            <i class="fab fa-docker text-2xl sm:text-3xl text-purple-400"></i>
+                            <span class="font-medium text-sm">Docker</span>
                             <span class="text-xs text-text-muted">容器化部署</span>
                         </button>
-                        <button class="skill-card cat-purple p-6 rounded-xl border flex flex-col items-center gap-3" data-skill="Git">
-                            <i class="fab fa-git-alt text-3xl text-purple-400"></i>
-                            <span class="font-medium">Git</span>
+                        <button class="skill-card cat-purple p-4 sm:p-6 rounded-xl border flex flex-col items-center gap-2 sm:gap-3" data-skill="Git">
+                            <i class="fab fa-git-alt text-2xl sm:text-3xl text-purple-400"></i>
+                            <span class="font-medium text-sm">Git</span>
                             <span class="text-xs text-text-muted">版本控制</span>
                         </button>
-                        <button class="skill-card cat-purple p-6 rounded-xl border flex flex-col items-center gap-3" data-skill="网络">
-                            <i class="fas fa-network-wired text-3xl text-purple-400"></i>
-                            <span class="font-medium">计算机网络</span>
+                        <button class="skill-card cat-purple p-4 sm:p-6 rounded-xl border flex flex-col items-center gap-2 sm:gap-3" data-skill="网络">
+                            <i class="fas fa-network-wired text-2xl sm:text-3xl text-purple-400"></i>
+                            <span class="font-medium text-sm">计算机网络</span>
                             <span class="text-xs text-text-muted">TCP/IP</span>
                         </button>
                     </div>
@@ -274,22 +273,22 @@
                     <p class="text-text-secondary">期待与您的交流</p>
                 </div>
                 
-                <div class="flex flex-wrap justify-center gap-8">
-                    <a href="#" class="flex items-center gap-3 px-5 py-3 rounded-xl glass-card hover:scale-105 transition-transform group">
+                <div class="flex flex-col sm:flex-wrap sm:flex-row sm:justify-center gap-4">
+                    <a href="#" class="flex items-center justify-center gap-3 px-5 py-3 rounded-xl glass-card hover:scale-105 transition-transform group">
                         <div class="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center group-hover:bg-blue-500/30 transition-colors">
                             <i class="fas fa-envelope text-blue-400"></i>
                         </div>
                         <span class="text-text-secondary group-hover:text-text-primary transition-colors">请看您手里的A4纸</span>
                     </a>
                     
-                    <a href="#" class="flex items-center gap-3 px-5 py-3 rounded-xl glass-card hover:scale-105 transition-transform group">
+                    <a href="#" class="flex items-center justify-center gap-3 px-5 py-3 rounded-xl glass-card hover:scale-105 transition-transform group">
                         <div class="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center group-hover:bg-green-500/30 transition-colors">
                             <i class="fas fa-phone text-green-400"></i>
                         </div>
                         <span class="text-text-secondary group-hover:text-text-primary transition-colors">请看您手里的A4纸</span>
                     </a>
                     
-                    <a href="#" class="flex items-center gap-3 px-5 py-3 rounded-xl glass-card hover:scale-105 transition-transform group">
+                    <a href="#" class="flex items-center justify-center gap-3 px-5 py-3 rounded-xl glass-card hover:scale-105 transition-transform group">
                         <div class="w-10 h-10 rounded-lg bg-gray-500/20 flex items-center justify-center group-hover:bg-gray-500/30 transition-colors">
                             <i class="fab fa-github text-gray-400"></i>
                         </div>

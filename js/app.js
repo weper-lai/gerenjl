@@ -159,8 +159,7 @@ function getSkillInfo(skillName) {
             highlights: ['分布式架构', '消息队列', '缓存优化'],
             stack: ['Java 21', 'Spring Boot', 'Redis', 'MySQL'],
             projectName: '企业级后台管理系统',
-            projectDesc: '基于Spring Boot构建的完整后端服务，支持用户认证、权限管理、数据统计等核心功能',
-            stats: { code: '28K', modules: '12', api: '48', coverage: '85%' }
+            projectDesc: '基于Spring Boot构建的完整后端服务，支持用户认证、权限管理、数据统计等核心功能'
         },
         'Python': {
             icon: 'fab fa-python text-blue-400',
@@ -168,8 +167,7 @@ function getSkillInfo(skillName) {
             highlights: ['大数据处理', 'AI模型部署', '自动化脚本'],
             stack: ['Python 3', 'Pandas', 'Scikit-learn', 'Django'],
             projectName: '智能数据分析平台',
-            projectDesc: '数据清洗、统计分析、可视化展示一体化解决方案，支持多格式数据源',
-            stats: { code: '15K', modules: '8', api: '24', coverage: '78%' }
+            projectDesc: '数据清洗、统计分析、可视化展示一体化解决方案，支持多格式数据源'
         },
         'JavaScript': {
             icon: 'fab fa-js text-blue-400',
@@ -177,8 +175,7 @@ function getSkillInfo(skillName) {
             highlights: ['高性能渲染', '响应式设计', '组件化开发'],
             stack: ['ES6+', 'Vue.js', 'React', 'Node.js'],
             projectName: '交互式数据可视化引擎',
-            projectDesc: '基于Canvas的高性能图形渲染引擎，支持多种图表类型和动画效果',
-            stats: { code: '22K', modules: '15', api: '36', coverage: '82%' }
+            projectDesc: '基于Canvas的高性能图形渲染引擎，支持多种图表类型和动画效果'
         },
         'C++': {
             icon: 'fas fa-code text-blue-400',
@@ -186,8 +183,7 @@ function getSkillInfo(skillName) {
             highlights: ['3D渲染引擎', '内存管理', '并行计算'],
             stack: ['C++17', 'Qt', 'OpenGL', 'STL'],
             projectName: '3D图形渲染引擎',
-            projectDesc: '基于OpenGL的轻量级3D渲染引擎，支持模型加载、光照渲染、纹理映射',
-            stats: { code: '35K', modules: '10', api: '64', coverage: '72%' }
+            projectDesc: '基于OpenGL的轻量级3D渲染引擎，支持模型加载、光照渲染、纹理映射'
         },
         'MySQL': {
             icon: 'fas fa-database text-orange-400',
@@ -195,8 +191,7 @@ function getSkillInfo(skillName) {
             highlights: ['高并发架构', '数据分片', '备份恢复'],
             stack: ['MySQL 8', 'InnoDB', 'MyISAM', 'SQL优化'],
             projectName: '分布式数据库集群',
-            projectDesc: '主从复制架构，读写分离，支持百万级数据量的高性能数据库解决方案',
-            stats: { code: 'N/A', modules: '6', api: 'N/A', coverage: '95%' }
+            projectDesc: '主从复制架构，读写分离，支持百万级数据量的高性能数据库解决方案'
         },
         'PostgreSQL': {
             icon: 'fab fa-postgresql text-orange-400',
@@ -204,8 +199,7 @@ function getSkillInfo(skillName) {
             highlights: ['复杂查询优化', '数据仓库', '空间数据'],
             stack: ['PostgreSQL', 'PostGIS', 'pg_stat_statements'],
             projectName: '企业级数据仓库',
-            projectDesc: '支持复杂分析查询、JSON数据处理、全文检索的综合数据存储解决方案',
-            stats: { code: 'N/A', modules: '8', api: 'N/A', coverage: '92%' }
+            projectDesc: '支持复杂分析查询、JSON数据处理、全文检索的综合数据存储解决方案'
         },
         'MongoDB': {
             icon: 'fas fa-leaf text-orange-400',
@@ -213,8 +207,7 @@ function getSkillInfo(skillName) {
             highlights: ['大数据存储', '水平扩展', '实时数据分析'],
             stack: ['MongoDB', 'Mongoose', 'Atlas'],
             projectName: '实时数据处理平台',
-            projectDesc: '面向大数据场景的文档数据库解决方案，支持实时数据写入和复杂聚合分析',
-            stats: { code: 'N/A', modules: '5', api: 'N/A', coverage: '88%' }
+            projectDesc: '面向大数据场景的文档数据库解决方案，支持实时数据写入和复杂聚合分析'
         },
         'Redis': {
             icon: 'fas fa-redo text-orange-400',
@@ -222,8 +215,7 @@ function getSkillInfo(skillName) {
             highlights: ['高性能缓存', '实时通信', '任务队列'],
             stack: ['Redis', 'Redis Cluster', 'Lua脚本'],
             projectName: '分布式缓存系统',
-            projectDesc: '支持分布式锁、发布订阅、限流熔断的高性能缓存中间件解决方案',
-            stats: { code: 'N/A', modules: '4', api: 'N/A', coverage: '90%' }
+            projectDesc: '支持分布式锁、发布订阅、限流熔断的高性能缓存中间件解决方案'
         },
         'HTML/CSS': {
             icon: 'fab fa-html5 text-cyan-400',
@@ -231,8 +223,7 @@ function getSkillInfo(skillName) {
             highlights: ['像素级还原', '性能优化', '无障碍访问'],
             stack: ['HTML5', 'CSS3', 'Tailwind', 'SCSS'],
             projectName: '企业级设计系统',
-            projectDesc: '包含完整组件库、设计规范、主题系统的现代化前端设计解决方案',
-            stats: { code: '8K', modules: '24', api: 'N/A', coverage: 'N/A' }
+            projectDesc: '包含完整组件库、设计规范、主题系统的现代化前端设计解决方案'
         },
         'Vue.js': {
             icon: 'fab fa-vuejs text-cyan-400',
@@ -240,8 +231,7 @@ function getSkillInfo(skillName) {
             highlights: ['SPA开发', 'SSR支持', '微前端'],
             stack: ['Vue 3', 'Pinia', 'Vue Router', 'Vite'],
             projectName: '企业级后台管理系统',
-            projectDesc: '功能完善的Admin管理平台，支持权限管理、数据表格、表单验证等核心功能',
-            stats: { code: '18K', modules: '32', api: '42', coverage: '75%' }
+            projectDesc: '功能完善的Admin管理平台，支持权限管理、数据表格、表单验证等核心功能'
         },
         'React': {
             icon: 'fab fa-react text-cyan-400',
@@ -249,8 +239,7 @@ function getSkillInfo(skillName) {
             highlights: ['大型应用', '实时协作', '服务端渲染'],
             stack: ['React 18', 'Redux', 'Next.js', 'TypeScript'],
             projectName: '实时协作编辑平台',
-            projectDesc: '支持多人实时协作、版本控制、富文本编辑的现代化Web应用',
-            stats: { code: '25K', modules: '28', api: '38', coverage: '80%' }
+            projectDesc: '支持多人实时协作、版本控制、富文本编辑的现代化Web应用'
         },
         'Node.js': {
             icon: 'fab fa-node-js text-cyan-400',
@@ -258,8 +247,7 @@ function getSkillInfo(skillName) {
             highlights: ['高并发处理', 'WebSocket', 'Docker部署'],
             stack: ['Node.js', 'Express', 'Socket.io', 'Docker'],
             projectName: '实时消息推送系统',
-            projectDesc: '支持百万级并发连接的实时消息推送服务，低延迟、高可用',
-            stats: { code: '20K', modules: '12', api: '56', coverage: '85%' }
+            projectDesc: '支持百万级并发连接的实时消息推送服务，低延迟、高可用'
         },
         'Linux': {
             icon: 'fab fa-linux text-purple-400',
@@ -267,8 +255,7 @@ function getSkillInfo(skillName) {
             highlights: ['性能监控', '日志分析', '安全加固'],
             stack: ['Ubuntu', 'CentOS', 'Nginx', 'Systemd'],
             projectName: '自动化运维平台',
-            projectDesc: '集监控告警、日志分析、自动化部署于一体的企业级运维解决方案',
-            stats: { code: '6K', modules: '8', api: 'N/A', coverage: '90%' }
+            projectDesc: '集监控告警、日志分析、自动化部署于一体的企业级运维解决方案'
         },
         'Docker': {
             icon: 'fab fa-docker text-purple-400',
@@ -276,8 +263,7 @@ function getSkillInfo(skillName) {
             highlights: ['镜像管理', '编排部署', '持续集成'],
             stack: ['Docker', 'Docker Compose', 'K8s', 'Jenkins'],
             projectName: '容器化部署平台',
-            projectDesc: '支持多环境部署、自动扩缩容、健康检查的容器化微服务解决方案',
-            stats: { code: 'N/A', modules: '4', api: 'N/A', coverage: '95%' }
+            projectDesc: '支持多环境部署、自动扩缩容、健康检查的容器化微服务解决方案'
         },
         'Git': {
             icon: 'fab fa-git-alt text-purple-400',
@@ -285,8 +271,7 @@ function getSkillInfo(skillName) {
             highlights: ['团队协作', '代码规范', '持续集成'],
             stack: ['Git', 'GitHub', 'GitLab', 'Gerrit'],
             projectName: '代码管理平台',
-            projectDesc: '支持代码托管、代码审查、持续集成的企业级代码管理解决方案',
-            stats: { code: 'N/A', modules: '3', api: 'N/A', coverage: 'N/A' }
+            projectDesc: '支持代码托管、代码审查、持续集成的企业级代码管理解决方案'
         },
         '网络': {
             icon: 'fas fa-network-wired text-purple-400',
@@ -294,8 +279,7 @@ function getSkillInfo(skillName) {
             highlights: ['网络协议', '安全防护', '性能优化'],
             stack: ['TCP/IP', 'HTTP/2', 'WebSocket', 'Nginx'],
             projectName: '高可用网络架构',
-            projectDesc: '支持负载均衡、故障转移、流量控制的企业级网络架构解决方案',
-            stats: { code: 'N/A', modules: '5', api: 'N/A', coverage: '92%' }
+            projectDesc: '支持负载均衡、故障转移、流量控制的企业级网络架构解决方案'
         }
     };
     return skillData[skillName] || {
@@ -304,7 +288,6 @@ function getSkillInfo(skillName) {
         highlights: ['项目经验'],
         stack: ['技术栈'],
         projectName: '项目演示',
-        projectDesc: '功能演示窗口',
-        stats: { code: 'N/A', modules: 'N/A', api: 'N/A', coverage: 'N/A' }
+        projectDesc: '功能演示窗口'
     };
 }
