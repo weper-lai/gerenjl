@@ -79,7 +79,11 @@ function loadIframeDemo(url, loadingText) {
     const demoArea = document.getElementById('project-demo-area');
     if (!demoArea) return;
     
-    const basePath = window.location.pathname.replace(/\/$/, '').split('/').slice(0, -1).join('/');
+    let currentPath = window.location.pathname.replace(/\/$/, '');
+    if (!currentPath.endsWith('.html')) {
+        currentPath = currentPath + '/';
+    }
+    const basePath = currentPath.substring(0, currentPath.lastIndexOf('/'));
     const fullUrl = basePath + url;
     
     demoArea.innerHTML = `
