@@ -17,15 +17,17 @@ async function trackVisitor() {
         );
         const existingData = await existingResponse.json();
         
+        let newCount = 1;
         if (Array.isArray(existingData) && existingData.length > 0) {
             const existing = existingData[0];
+            newCount = existing.visit_count + 1;
             await fetch(
-                `${SUPABASE_URL}/rest/v1/visitor_stats/${existing.id}`,
+                `${SUPABASE_URL}/rest/v1/visitor_stats?id=eq.${existing.id}`,
                 {
                     method: 'PATCH',
                     headers,
                     body: JSON.stringify({
-                        visit_count: existing.visit_count + 1,
+                        visit_count: newCount,
                         updated_at: new Date().toISOString()
                     })
                 }
@@ -52,13 +54,15 @@ async function trackVisitor() {
         );
         const totalData = await totalResponse.json();
         
-        const totalVisitors = Array.isArray(totalData) 
-            ? totalData.reduce((sum, row) => sum + (row.visit_count || 0), 0) 
-            : 0;
+        let totalVisitors = 0;
+        if (Array.isArray(totalData)) {
+            totalVisitors = totalData.reduce((sum, row) => sum + (row.visit_count || 0), 0);
+        }
         
         updateVisitorDisplay({ totalVisitors });
     } catch (error) {
         console.error('访客统计错误:', error);
+        updateVisitorDisplay({ totalVisitors: 'N/A' });
     }
 }
 
