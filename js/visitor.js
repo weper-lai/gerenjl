@@ -2,13 +2,17 @@ const SUPABASE_URL = 'https://nfikngtirtqgxtihkous.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_MVKHL8LctqsdEbkaBM4_cQ_UnfyGhkO';
 
 async function trackVisitor() {
+    if (trackVisitor.isTracking) return;
+    trackVisitor.isTracking = true;
+    
     try {
         const today = new Date().toISOString().split('T')[0];
         
         const headers = {
             'apikey': SUPABASE_ANON_KEY,
             'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Prefer': 'return=representation'
         };
         
         const existingResponse = await fetch(
@@ -20,18 +24,20 @@ async function trackVisitor() {
         let newCount = 1;
         if (Array.isArray(existingData) && existingData.length > 0) {
             const existing = existingData[0];
-            newCount = existing.visit_count + 1;
-            await fetch(
-                `${SUPABASE_URL}/rest/v1/visitor_stats?id=eq.${existing.id}`,
-                {
-                    method: 'PATCH',
-                    headers,
-                    body: JSON.stringify({
-                        visit_count: newCount,
-                        updated_at: new Date().toISOString()
-                    })
-                }
-            );
+            if (existing && typeof existing.visit_count === 'number') {
+                newCount = existing.visit_count + 1;
+                await fetch(
+                    `${SUPABASE_URL}/rest/v1/visitor_stats?id=eq.${existing.id}`,
+                    {
+                        method: 'PATCH',
+                        headers,
+                        body: JSON.stringify({
+                            visit_count: newCount,
+                            updated_at: new Date().toISOString()
+                        })
+                    }
+                );
+            }
         } else {
             await fetch(
                 `${SUPABASE_URL}/rest/v1/visitor_stats`,
@@ -61,8 +67,9 @@ async function trackVisitor() {
         
         updateVisitorDisplay({ totalVisitors });
     } catch (error) {
-        console.error('访客统计错误:', error);
         updateVisitorDisplay({ totalVisitors: 'N/A' });
+    } finally {
+        trackVisitor.isTracking = false;
     }
 }
 
