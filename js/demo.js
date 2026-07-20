@@ -79,12 +79,7 @@ function loadIframeDemo(url, loadingText) {
     const demoArea = document.getElementById('project-demo-area');
     if (!demoArea) return;
     
-    let currentPath = window.location.pathname.replace(/\/$/, '');
-    if (!currentPath.endsWith('.html')) {
-        currentPath = currentPath + '/';
-    }
-    const basePath = currentPath.substring(0, currentPath.lastIndexOf('/'));
-    const fullUrl = basePath + url;
+    const fullUrl = 'demos' + url.substring(url.lastIndexOf('/'));
     
     demoArea.innerHTML = `
         <div class="relative w-full h-full min-h-[500px]">
