@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python 机器学习平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: #0f172a;
+            color: #e2e8f0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .ml-card {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            transition: all 0.3s ease;
+        }
+        .ml-card:hover {
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+        .model-btn {
+            transition: all 0.3s ease;
+        }
+        .model-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .confusion-cell {
+            transition: all 0.3s ease;
+        }
+        .confusion-cell:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body class="p-6">
+    <div class="max-w-6xl mx-auto">
+        <div class="flex items-center gap-3 mb-6">
+            <i class="fab fa-python text-3xl text-blue-400"></i>
+            <h1 class="text-2xl font-bold">机器学习模型演示平台</h1>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-1 space-y-4">
+                <div class="ml-card">
+                    <h3 class="text-sm font-medium text-text-muted mb-4">选择模型</h3>
+                    <div class="space-y-2">
+                        <button onclick="showClassification()" class="model-btn w-full p-3 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 transition-colors text-left flex items-center gap-2">
+                            <i class="fas fa-check-circle"></i> 分类模型
+                        </button>
+                        <button onclick="showRegression()" class="model-btn w-full p-3 rounded-lg bg-green-500/10 text-green-400 hover:bg-green-500/20 transition-colors text-left flex items-center gap-2">
+                            <i class="fas fa-line-chart"></i> 回归模型
+                        </button>
+                        <button onclick="showClustering()" class="model-btn w-full p-3 rounded-lg bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 transition-colors text-left flex items-center gap-2">
+                            <i class="fas fa-object-group"></i> 聚类分析
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="ml-card">
+                    <h3 class="text-sm font-medium text-text-muted mb-4">参数调整</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="text-xs text-text-muted block mb-2">学习率</label>
+                            <input type="range" min="0.01" max="0.5" step="0.01" value="0.1" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                        </div>
+                        <div>
+                            <label class="text-xs text-text-muted block mb-2">训练轮数</label>
+                            <input type="range" min="10" max="1000" step="10" value="100" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                        </div>
+                        <div>
+                            <label class="text-xs text-text-muted block mb-2">特征数量</label>
+                            <input type="range" min="2" max="10" step="1" value="4" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="ml-card">
+                    <h3 class="text-sm font-medium text-text-muted mb-2">模型评估</h3>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="bg-blue-500/10 rounded-lg p-3 text-center">
+                            <div class="text-lg font-bold text-blue-400" id="acc-score">-</div>
+                            <div class="text-xs text-text-muted">准确率</div>
+                        </div>
+                        <div class="bg-green-500/10 rounded-lg p-3 text-center">
+                            <div class="text-lg font-bold text-green-400" id="f1-score">-</div>
+                            <div class="text-xs text-text-muted">F1分数</div>
+                        </div>
+                        <div class="bg-purple-500/10 rounded-lg p-3 text-center">
+                            <div class="text-lg font-bold text-purple-400" id="precision">-</div>
+                            <div class="text-xs text-text-muted">精确率</div>
+                        </div>
+                        <div class="bg-cyan-500/10 rounded-lg p-3 text-center">
+                            <div class="text-lg font-bold text-cyan-400" id="recall">-</div>
+                            <div class="text-xs text-text-muted">召回率</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="lg:col-span-2">
+                <div class="ml-card">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-sm font-medium" id="model-title">分类模型演示</span>
+                        <button onclick="trainModel()" class="px-4 py-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity">
+                            <i class="fas fa-play mr-2"></i> 训练模型
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div class="bg-black/30 rounded-lg p-4">
+                            <h4 class="text-xs text-text-muted mb-2">数据分布</h4>
+                            <canvas id="data-chart" width="300" height="200"></canvas>
+                        </div>
+                        <div class="bg-black/30 rounded-lg p-4">
+                            <h4 class="text-xs text-text-muted mb-2">训练进度</h4>
+                            <div class="w-full h-2 bg-gray-700 rounded-full overflow-hidden mb-2">
+                                <div id="progress-bar" class="h-full bg-gradient-to-r from-blue-500 to-cyan-500 transition-all duration-300" style="width: 0%"></div>
+                            </div>
+                            <div id="training-status" class="text-xs text-text-muted">等待训练...</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-black/30 rounded-lg p-4">
+                        <h4 class="text-xs text-text-muted mb-3">混淆矩阵</h4>
+                        <div class="flex justify-center">
+                            <div class="grid grid-cols-3 gap-2">
+                                <div></div>
+                                <div class="text-center text-xs text-text-muted">预测: 正</div>
+                                <div class="text-center text-xs text-text-muted">预测: 负</div>
+                                <div class="text-xs text-text-muted">实际: 正</div>
+                                <div id="tp-cell" class="confusion-cell w-20 h-16 bg-green-500/30 rounded-lg flex items-center justify-center">
+                                    <span class="text-xl font-bold text-green-400">0</span>
+                                </div>
+                                <div id="fn-cell" class="confusion-cell w-20 h-16 bg-red-500/30 rounded-lg flex items-center justify-center">
+                                    <span class="text-xl font-bold text-red-400">0</span>
+                                </div>
+                                <div class="text-xs text-text-muted">实际: 负</div>
+                                <div id="fp-cell" class="confusion-cell w-20 h-16 bg-red-500/30 rounded-lg flex items-center justify-center">
+                                    <span class="text-xl font-bold text-red-400">0</span>
+                                </div>
+                                <div id="tn-cell" class="confusion-cell w-20 h-16 bg-green-500/30 rounded-lg flex items-center justify-center">
+                                    <span class="text-xl font-bold text-green-400">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 p-3 bg-black/30 rounded-lg font-mono text-xs">
+                        <div id="code-preview" class="text-text-secondary">
+<span class="text-blue-400">import</span> <span class="text-yellow-400">numpy</span> <span class="text-blue-400">as</span> np<br>
+<span class="text-blue-400">from</span> <span class="text-yellow-400">sklearn</span> <span class="text-blue-400">import</span> datasets<br>
+<span class="text-blue-400">from</span> <span class="text-yellow-400">sklearn.linear_model</span> <span class="text-blue-400">import</span> LogisticRegression<br><br>
+<span class="text-green-400"># 加载数据集</span><br>
+X, y = datasets.make_classification(n_samples=1000)<br><br>
+<span class="text-green-400"># 训练模型</span><br>
+model = LogisticRegression()<br>
+model.fit(X, y)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentModel = 'classification';
+        let chartCtx = document.getElementById('data-chart').getContext('2d');
+
+        function showClassification() {
+            currentModel = 'classification';
+            document.getElementById('model-title').textContent = '分类模型演示';
+            document.getElementById('code-preview').innerHTML = `
+<span class="text-blue-400">import</span> <span class="text-yellow-400">numpy</span> <span class="text-blue-400">as</span> np<br>
+<span class="text-blue-400">from</span> <span class="text-yellow-400">sklearn</span> <span class="text-blue-400">import</span> datasets<br>
+<span class="text-blue-400">from</span> <span class="text-yellow-400">sklearn.linear_model</span> <span class="text-blue-400">import</span> LogisticRegression<br><br>
+<span class="text-green-400"># 加载数据集</span><br>
+X, y = datasets.make_classification(n_samples=1000)<br><br>
+<span class="text-green-400"># 训练模型</span><br>
+model = LogisticRegression()<br>
+model.fit(X, y)
+            `;
+            drawClassificationData();
+        }
+
+        function showRegression() {
+            currentModel = 'regression';
+            document.getElementById('model-title').textContent = '回归模型演示';
+            document.getElementById('code-preview').innerHTML = `
+<span class="text-blue-400">import</span> <span class="text-yellow-400">numpy</span> <span class="text-blue-400">as</span> np<br>
+<span class="text-blue-400">from</span> <span class="text-yellow-400">sklearn</span> <span class="text-blue-400">import</span> datasets<br>
+<span class="text-blue-400">from</span> <span class="text-yellow-400">sklearn.linear_model</span> <span class="text-blue-400">import</span> LinearRegression<br><br>
+<span class="text-green-400"># 生成回归数据</span><br>
+X, y = datasets.make_regression(n_samples=1000, n_features=1)<br><br>
+<span class="text-green-400"># 训练模型</span><br>
+model = LinearRegression()<br>
+model.fit(X, y)
+            `;
+            drawRegressionData();
+        }
+
+        function showClustering() {
+            currentModel = 'clustering';
+            document.getElementById('model-title').textContent = '聚类分析演示';
+            document.getElementById('code-preview').innerHTML = `
+<span class="text-blue-400">import</span> <span class="text-yellow-400">numpy</span> <span class="text-blue-400">as</span> np<br>
+<span class="text-blue-400">from</span> <span class="text-yellow-400">sklearn</span> <span class="text-blue-400">import</span> datasets<br>
+<span class="text-blue-400">from</span> <span class="text-yellow-400">sklearn.cluster</span> <span class="text-blue-400">import</span> KMeans<br><br>
+<span class="text-green-400"># 生成聚类数据</span><br>
+X, _ = datasets.make_blobs(n_samples=1000, centers=3)<br><br>
+<span class="text-green-400"># 训练模型</span><br>
+model = KMeans(n_clusters=3)<br>
+model.fit(X)
+            `;
+            drawClusteringData();
+        }
+
+        function drawClassificationData() {
+            const ctx = chartCtx;
+            ctx.clearRect(0, 0, 300, 200);
+            
+            for (let i = 0; i < 100; i++) {
+                const x = Math.random() * 280 + 10;
+                const y = Math.random() * 180 + 10;
+                const isPositive = x > y;
+                
+                ctx.beginPath();
+                ctx.arc(x, y, 4, 0, Math.PI * 2);
+                ctx.fillStyle = isPositive ? '#3b82f6' : '#ef4444';
+                ctx.fill();
+            }
+            
+            ctx.beginPath();
+            ctx.moveTo(10, 10);
+            ctx.lineTo(290, 190);
+            ctx.strokeStyle = '#22c55e';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        function drawRegressionData() {
+            const ctx = chartCtx;
+            ctx.clearRect(0, 0, 300, 200);
+            
+            for (let i = 0; i < 100; i++) {
+                const x = Math.random() * 280 + 10;
+                const y = x * 0.6 + Math.random() * 40 - 20;
+                
+                ctx.beginPath();
+                ctx.arc(x, Math.max(10, Math.min(190, y)), 3, 0, Math.PI * 2);
+                ctx.fillStyle = '#22c55e';
+                ctx.fill();
+            }
+            
+            ctx.beginPath();
+            ctx.moveTo(10, 16);
+            ctx.lineTo(290, 180);
+            ctx.strokeStyle = '#3b82f6';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+        }
+
+        function drawClusteringData() {
+            const ctx = chartCtx;
+            ctx.clearRect(0, 0, 300, 200);
+            
+            const colors = ['#3b82f6', '#ef4444', '#22c55e'];
+            
+            for (let cluster = 0; cluster < 3; cluster++) {
+                const cx = 50 + cluster * 100;
+                const cy = 60 + (cluster % 2) * 80;
+                
+                for (let i = 0; i < 30; i++) {
+                    const x = cx + (Math.random() - 0.5) * 60;
+                    const y = cy + (Math.random() - 0.5) * 60;
+                    
+                    ctx.beginPath();
+                    ctx.arc(x, y, 4, 0, Math.PI * 2);
+                    ctx.fillStyle = colors[cluster];
+                    ctx.fill();
+                }
+            }
+        }
+
+        function trainModel() {
+            const progressBar = document.getElementById('progress-bar');
+            const status = document.getElementById('training-status');
+            
+            progressBar.style.width = '0%';
+            status.textContent = '初始化模型...';
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    status.textContent = '训练完成!';
+                    showResults();
+                } else {
+                    status.textContent = `训练中... ${Math.round(progress)}%`;
+                }
+                progressBar.style.width = `${progress}%`;
+            }, 200);
+        }
+
+        function showResults() {
+            const acc = (0.85 + Math.random() * 0.14).toFixed(2);
+            const f1 = (0.82 + Math.random() * 0.15).toFixed(2);
+            const precision = (0.83 + Math.random() * 0.14).toFixed(2);
+            const recall = (0.84 + Math.random() * 0.13).toFixed(2);
+            
+            document.getElementById('acc-score').textContent = acc;
+            document.getElementById('f1-score').textContent = f1;
+            document.getElementById('precision').textContent = precision;
+            document.getElementById('recall').textContent = recall;
+            
+            const tp = Math.floor(Math.random() * 40) + 45;
+            const fn = Math.floor(Math.random() * 10) + 5;
+            const fp = Math.floor(Math.random() * 8) + 4;
+            const tn = Math.floor(Math.random() * 40) + 43;
+            
+            document.getElementById('tp-cell').innerHTML = `<span class="text-xl font-bold text-green-400">${tp}</span>`;
+            document.getElementById('fn-cell').innerHTML = `<span class="text-xl font-bold text-red-400">${fn}</span>`;
+            document.getElementById('fp-cell').innerHTML = `<span class="text-xl font-bold text-red-400">${fp}</span>`;
+            document.getElementById('tn-cell').innerHTML = `<span class="text-xl font-bold text-green-400">${tn}</span>`;
+            
+            document.getElementById('code-preview').innerHTML += `
+<br><br>
+<span class="text-green-400"># 模型评估</span><br>
+<span class="text-text-muted">accuracy =</span> <span class="text-blue-400">${acc}</span><br>
+<span class="text-text-muted">f1_score =</span> <span class="text-blue-400">${f1}</span><br>
+<span class="text-text-muted">precision =</span> <span class="text-blue-400">${precision}</span><br>
+<span class="text-text-muted">recall =</span> <span class="text-blue-400">${recall}</span>
+            `;
+        }
+
+        showClassification();
+    </script>
+</body>
+</html>

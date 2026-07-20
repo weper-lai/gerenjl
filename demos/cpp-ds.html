@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C++ 数据结构可视化</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: #0f172a;
+            color: #e2e8f0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .ds-card {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            transition: all 0.3s ease;
+        }
+        .ds-card:hover {
+            border-color: rgba(59, 130, 246, 0.3);
+            transform: translateY(-2px);
+        }
+        .node {
+            transition: all 0.3s ease;
+        }
+        .node:hover {
+            transform: scale(1.1);
+        }
+        .edge {
+            stroke: rgba(148, 163, 184, 0.3);
+            stroke-width: 2;
+        }
+        .active-node {
+            stroke: #3b82f6;
+            stroke-width: 3;
+        }
+        .search-highlight {
+            fill: #f59e0b !important;
+        }
+    </style>
+</head>
+<body class="p-6">
+    <div class="max-w-6xl mx-auto">
+        <div class="flex items-center gap-3 mb-6">
+            <i class="fab fa-cpp text-3xl text-blue-400"></i>
+            <h1 class="text-2xl font-bold">数据结构可视化工具</h1>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <div class="lg:col-span-1 space-y-4">
+                <div class="ds-card">
+                    <h3 class="text-sm font-medium text-text-muted mb-4">选择数据结构</h3>
+                    <div class="space-y-2">
+                        <button onclick="showLinkedList()" class="w-full p-3 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 transition-colors text-left">
+                            <i class="fas fa-link mr-2"></i> 链表
+                        </button>
+                        <button onclick="showBinaryTree()" class="w-full p-3 rounded-lg bg-green-500/10 text-green-400 hover:bg-green-500/20 transition-colors text-left">
+                            <i class="fas fa-tree mr-2"></i> 二叉树
+                        </button>
+                        <button onclick="showGraph()" class="w-full p-3 rounded-lg bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 transition-colors text-left">
+                            <i class="fas fa-project-diagram mr-2"></i> 图结构
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="ds-card">
+                    <h3 class="text-sm font-medium text-text-muted mb-4">操作</h3>
+                    <div class="space-y-2">
+                        <button onclick="addNode()" class="w-full p-2 rounded-lg bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 transition-colors text-sm">
+                            添加节点
+                        </button>
+                        <button onclick="deleteNode()" class="w-full p-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors text-sm">
+                            删除节点
+                        </button>
+                        <button onclick="searchNode()" class="w-full p-2 rounded-lg bg-yellow-500/10 text-yellow-400 hover:bg-yellow-500/20 transition-colors text-sm">
+                            搜索节点
+                        </button>
+                        <button onclick="traverse()" class="w-full p-2 rounded-lg bg-green-500/10 text-green-400 hover:bg-green-500/20 transition-colors text-sm">
+                            遍历演示
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="ds-card">
+                    <h3 class="text-sm font-medium text-text-muted mb-2">复杂度分析</h3>
+                    <div class="text-xs space-y-1">
+                        <div class="flex justify-between">
+                            <span class="text-text-muted">插入</span>
+                            <span class="text-blue-400">O(1)</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-text-muted">删除</span>
+                            <span class="text-blue-400">O(1)</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-text-muted">查找</span>
+                            <span class="text-blue-400">O(n)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="lg:col-span-3">
+                <div class="ds-card h-[500px] flex flex-col">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-sm font-medium" id="ds-title">单链表结构</span>
+                        <span class="text-xs text-text-muted" id="ds-status">节点数: 0</span>
+                    </div>
+                    <div class="flex-1 flex items-center justify-center relative">
+                        <svg id="ds-canvas" width="100%" height="100%" viewBox="0 0 800 400"></svg>
+                        <div id="empty-state" class="absolute text-center text-text-muted">
+                            <i class="fas fa-code text-6xl mb-4 opacity-30"></i>
+                            <p>选择数据结构开始演示</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 p-3 bg-black/30 rounded-lg font-mono text-xs">
+                        <div id="code-preview" class="text-text-secondary">// 等待操作...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentDS = 'linkedlist';
+        let nodes = [];
+        let svg = document.getElementById('ds-canvas');
+        let emptyState = document.getElementById('empty-state');
+        let codePreview = document.getElementById('code-preview');
+
+        function showLinkedList() {
+            currentDS = 'linkedlist';
+            document.getElementById('ds-title').textContent = '单链表结构';
+            nodes = [10, 20, 30, 40, 50];
+            renderLinkedList();
+            updateStatus();
+        }
+
+        function showBinaryTree() {
+            currentDS = 'tree';
+            document.getElementById('ds-title').textContent = '二叉搜索树';
+            nodes = [40, 20, 60, 10, 30, 50, 70];
+            renderBinaryTree();
+            updateStatus();
+        }
+
+        function showGraph() {
+            currentDS = 'graph';
+            document.getElementById('ds-title').textContent = '无向图';
+            nodes = [
+                { id: 'A', neighbors: ['B', 'C'] },
+                { id: 'B', neighbors: ['A', 'D', 'E'] },
+                { id: 'C', neighbors: ['A', 'F'] },
+                { id: 'D', neighbors: ['B'] },
+                { id: 'E', neighbors: ['B', 'F'] },
+                { id: 'F', neighbors: ['C', 'E'] }
+            ];
+            renderGraph();
+            updateStatus();
+        }
+
+        function renderLinkedList() {
+            emptyState.style.display = 'none';
+            svg.innerHTML = '';
+            
+            const nodeWidth = 80;
+            const nodeHeight = 50;
+            const gap = 40;
+            const startX = 50;
+            const startY = 200;
+
+            nodes.forEach((value, index) => {
+                const x = startX + index * (nodeWidth + gap);
+                const y = startY;
+
+                const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                group.setAttribute('class', 'node');
+
+                const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                rect.setAttribute('x', x);
+                rect.setAttribute('y', y);
+                rect.setAttribute('width', nodeWidth);
+                rect.setAttribute('height', nodeHeight);
+                rect.setAttribute('rx', '8');
+                rect.setAttribute('fill', '#1e293b');
+                rect.setAttribute('stroke', '#3b82f6');
+                rect.setAttribute('stroke-width', '2');
+                group.appendChild(rect);
+
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', x + nodeWidth / 2);
+                text.setAttribute('y', y + nodeHeight / 2);
+                text.setAttribute('text-anchor', 'middle');
+                text.setAttribute('dy', '0.35em');
+                text.setAttribute('fill', '#e2e8f0');
+                text.setAttribute('font-size', '16');
+                text.setAttribute('font-weight', 'bold');
+                text.textContent = value;
+                group.appendChild(text);
+
+                if (index < nodes.length - 1) {
+                    const arrowGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                    
+                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    line.setAttribute('x1', x + nodeWidth);
+                    line.setAttribute('y1', y + nodeHeight / 2);
+                    line.setAttribute('x2', x + nodeWidth + gap);
+                    line.setAttribute('y2', y + nodeHeight / 2);
+                    line.setAttribute('class', 'edge');
+                    arrowGroup.appendChild(line);
+
+                    const arrowhead = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+                    arrowhead.setAttribute('points', `${x + nodeWidth + gap - 10},${y + nodeHeight / 2 - 6} ${x + nodeWidth + gap},${y + nodeHeight / 2} ${x + nodeWidth + gap - 10},${y + nodeHeight / 2 + 6}`);
+                    arrowhead.setAttribute('fill', '#3b82f6');
+                    arrowGroup.appendChild(arrowhead);
+
+                    svg.appendChild(arrowGroup);
+                }
+
+                svg.appendChild(group);
+            });
+
+            codePreview.innerHTML = `
+<span class="text-blue-400">struct</span> <span class="text-yellow-400">Node</span> {<br>
+<span class="text-text-muted">&nbsp;&nbsp;int data;</span><br>
+<span class="text-text-muted">&nbsp;&nbsp;Node* next;</span><br>
+<span class="text-blue-400">};</span><br><br>
+<span class="text-green-400">// 创建链表</span><br>
+<span class="text-yellow-400">Node*</span> head = <span class="text-blue-400">new</span> <span class="text-yellow-400">Node</span>{${nodes.join(', ')}};
+            `;
+        }
+
+        function renderBinaryTree() {
+            emptyState.style.display = 'none';
+            svg.innerHTML = '';
+
+            const root = buildTree(nodes);
+            drawTree(root, 400, 50, 200);
+
+            codePreview.innerHTML = `
+<span class="text-blue-400">struct</span> <span class="text-yellow-400">TreeNode</span> {<br>
+<span class="text-text-muted">&nbsp;&nbsp;int val;</span><br>
+<span class="text-text-muted">&nbsp;&nbsp;TreeNode* left;</span><br>
+<span class="text-text-muted">&nbsp;&nbsp;TreeNode* right;</span><br>
+<span class="text-blue-400">};</span><br><br>
+<span class="text-green-400">// 中序遍历: ${inorderTraversal(root).join(' -> ')}</span>
+            `;
+        }
+
+        function buildTree(values) {
+            if (values.length === 0) return null;
+            const root = { val: values[0], left: null, right: null };
+            for (let i = 1; i < values.length; i++) {
+                insertNode(root, values[i]);
+            }
+            return root;
+        }
+
+        function insertNode(node, val) {
+            if (val < node.val) {
+                if (!node.left) node.left = { val, left: null, right: null };
+                else insertNode(node.left, val);
+            } else {
+                if (!node.right) node.right = { val, left: null, right: null };
+                else insertNode(node.right, val);
+            }
+        }
+
+        function drawTree(node, x, y, offset) {
+            if (!node) return;
+
+            const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            circle.setAttribute('cx', x);
+            circle.setAttribute('cy', y);
+            circle.setAttribute('r', '25');
+            circle.setAttribute('fill', '#1e293b');
+            circle.setAttribute('stroke', '#22c55e');
+            circle.setAttribute('stroke-width', '2');
+            svg.appendChild(circle);
+
+            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            text.setAttribute('x', x);
+            text.setAttribute('y', y);
+            text.setAttribute('text-anchor', 'middle');
+            text.setAttribute('dy', '0.35em');
+            text.setAttribute('fill', '#e2e8f0');
+            text.setAttribute('font-size', '14');
+            text.setAttribute('font-weight', 'bold');
+            text.textContent = node.val;
+            svg.appendChild(text);
+
+            if (node.left) {
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', x);
+                line.setAttribute('y1', y + 25);
+                line.setAttribute('x2', x - offset);
+                line.setAttribute('y2', y + 80);
+                line.setAttribute('class', 'edge');
+                line.setAttribute('stroke', '#22c55e');
+                svg.appendChild(line);
+                drawTree(node.left, x - offset, y + 80, offset / 2);
+            }
+
+            if (node.right) {
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', x);
+                line.setAttribute('y1', y + 25);
+                line.setAttribute('x2', x + offset);
+                line.setAttribute('y2', y + 80);
+                line.setAttribute('class', 'edge');
+                line.setAttribute('stroke', '#22c55e');
+                svg.appendChild(line);
+                drawTree(node.right, x + offset, y + 80, offset / 2);
+            }
+        }
+
+        function inorderTraversal(node) {
+            if (!node) return [];
+            return [...inorderTraversal(node.left), node.val, ...inorderTraversal(node.right)];
+        }
+
+        function renderGraph() {
+            emptyState.style.display = 'none';
+            svg.innerHTML = '';
+
+            const positions = {
+                'A': { x: 400, y: 80 },
+                'B': { x: 200, y: 200 },
+                'C': { x: 600, y: 200 },
+                'D': { x: 100, y: 320 },
+                'E': { x: 300, y: 320 },
+                'F': { x: 500, y: 320 }
+            };
+
+            nodes.forEach(node => {
+                node.neighbors.forEach(neighbor => {
+                    if (node.id < neighbor) {
+                        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                        line.setAttribute('x1', positions[node.id].x);
+                        line.setAttribute('y1', positions[node.id].y);
+                        line.setAttribute('x2', positions[neighbor].x);
+                        line.setAttribute('y2', positions[neighbor].y);
+                        line.setAttribute('class', 'edge');
+                        line.setAttribute('stroke', '#8b5cf6');
+                        svg.appendChild(line);
+                    }
+                });
+
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('cx', positions[node.id].x);
+                circle.setAttribute('cy', positions[node.id].y);
+                circle.setAttribute('r', '30');
+                circle.setAttribute('fill', '#1e293b');
+                circle.setAttribute('stroke', '#8b5cf6');
+                circle.setAttribute('stroke-width', '2');
+                svg.appendChild(circle);
+
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', positions[node.id].x);
+                text.setAttribute('y', positions[node.id].y);
+                text.setAttribute('text-anchor', 'middle');
+                text.setAttribute('dy', '0.35em');
+                text.setAttribute('fill', '#e2e8f0');
+                text.setAttribute('font-size', '16');
+                text.setAttribute('font-weight', 'bold');
+                text.textContent = node.id;
+                svg.appendChild(text);
+            });
+
+            codePreview.innerHTML = `
+<span class="text-blue-400">class</span> <span class="text-yellow-400">Graph</span> {<br>
+<span class="text-text-muted">&nbsp;&nbsp;unordered_map&lt;char, vector&lt;char&gt;&gt; adj;</span><br>
+<span class="text-text-muted">&nbsp;&nbsp;void addEdge(char u, char v);</span><br>
+<span class="text-blue-400">};</span><br><br>
+<span class="text-green-400">// BFS: A -> B -> C -> D -> E -> F</span>
+            `;
+        }
+
+        function addNode() {
+            const val = Math.floor(Math.random() * 90) + 10;
+            if (currentDS === 'linkedlist') {
+                nodes.push(val);
+                renderLinkedList();
+            } else if (currentDS === 'tree') {
+                nodes.push(val);
+                renderBinaryTree();
+            }
+            updateStatus();
+            codePreview.innerHTML += `<br><span class="text-green-400">// 添加节点: ${val}</span>`;
+        }
+
+        function deleteNode() {
+            if (nodes.length > 0) {
+                const val = nodes.pop();
+                if (currentDS === 'linkedlist') {
+                    renderLinkedList();
+                } else if (currentDS === 'tree') {
+                    renderBinaryTree();
+                }
+                updateStatus();
+                codePreview.innerHTML += `<br><span class="text-red-400">// 删除节点: ${val}</span>`;
+            }
+        }
+
+        function searchNode() {
+            if (nodes.length > 0) {
+                const searchVal = nodes[Math.floor(Math.random() * nodes.length)];
+                codePreview.innerHTML += `<br><span class="text-yellow-400">// 搜索节点: ${searchVal}</span>`;
+                
+                const circles = svg.querySelectorAll('circle');
+                const rects = svg.querySelectorAll('rect');
+                circles.forEach(c => c.classList.add('search-highlight'));
+                rects.forEach(r => r.setAttribute('fill', '#f59e0b'));
+                
+                setTimeout(() => {
+                    circles.forEach(c => c.classList.remove('search-highlight'));
+                    rects.forEach(r => r.setAttribute('fill', '#1e293b'));
+                }, 1000);
+            }
+        }
+
+        function traverse() {
+            codePreview.innerHTML += `<br><span class="text-cyan-400">// 开始遍历...</span>`;
+            
+            const circles = svg.querySelectorAll('circle');
+            const rects = svg.querySelectorAll('rect');
+            
+            circles.forEach((c, i) => {
+                setTimeout(() => {
+                    c.setAttribute('stroke', '#06b6d4');
+                    c.setAttribute('stroke-width', '4');
+                }, i * 200);
+            });
+            
+            rects.forEach((r, i) => {
+                setTimeout(() => {
+                    r.setAttribute('stroke', '#06b6d4');
+                    r.setAttribute('stroke-width', '4');
+                }, i * 200);
+            });
+            
+            setTimeout(() => {
+                circles.forEach(c => { c.setAttribute('stroke', '#22c55e'); c.setAttribute('stroke-width', '2'); });
+                rects.forEach(r => { r.setAttribute('stroke', '#3b82f6'); r.setAttribute('stroke-width', '2'); });
+                codePreview.innerHTML += `<br><span class="text-green-400">// 遍历完成</span>`;
+            }, circles.length * 200 + 500);
+        }
+
+        function updateStatus() {
+            const count = currentDS === 'graph' ? nodes.length : nodes.length;
+            document.getElementById('ds-status').textContent = `节点数: ${count}`;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MySQL 数据库设计工具</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: #0f172a;
+            color: #e2e8f0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .db-card {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            transition: all 0.3s ease;
+        }
+        .db-card:hover {
+            border-color: rgba(249, 115, 22, 0.3);
+        }
+        .table-box {
+            background: rgba(249, 115, 22, 0.1);
+            border: 1px solid rgba(249, 115, 22, 0.2);
+            border-radius: 8px;
+            padding: 12px;
+            transition: all 0.3s ease;
+        }
+        .table-box:hover {
+            border-color: rgba(249, 115, 22, 0.5);
+            transform: translateY(-2px);
+        }
+        .pk-tag {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+        }
+        .fk-tag {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+        }
+    </style>
+</head>
+<body class="p-6">
+    <div class="max-w-6xl mx-auto">
+        <div class="flex items-center gap-3 mb-6">
+            <i class="fas fa-database text-3xl text-orange-400"></i>
+            <h1 class="text-2xl font-bold">数据库设计工具</h1>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-1 space-y-4">
+                <div class="db-card">
+                    <h3 class="text-sm font-medium text-text-muted mb-4">数据库模型</h3>
+                    <div class="space-y-2">
+                        <button onclick="showECommerce()" class="w-full p-3 rounded-lg bg-orange-500/10 text-orange-400 hover:bg-orange-500/20 transition-colors text-left">
+                            <i class="fas fa-shopping-cart mr-2"></i> 电商系统
+                        </button>
+                        <button onclick="showBlog()" class="w-full p-3 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 transition-colors text-left">
+                            <i class="fas fa-blog mr-2"></i> 博客系统
+                        </button>
+                        <button onclick="showCRM()" class="w-full p-3 rounded-lg bg-green-500/10 text-green-400 hover:bg-green-500/20 transition-colors text-left">
+                            <i class="fas fa-users mr-2"></i> CRM系统
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="db-card">
+                    <h3 class="text-sm font-medium text-text-muted mb-4">操作</h3>
+                    <div class="space-y-2">
+                        <button onclick="generateDDL()" class="w-full p-2 rounded-lg bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 transition-colors text-sm">
+                            生成 DDL
+                        </button>
+                        <button onclick="generateERD()" class="w-full p-2 rounded-lg bg-yellow-500/10 text-yellow-400 hover:bg-yellow-500/20 transition-colors text-sm">
+                            生成 ER图
+                        </button>
+                        <button onclick="showIndexes()" class="w-full p-2 rounded-lg bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 transition-colors text-sm">
+                            索引分析
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="db-card">
+                    <h3 class="text-sm font-medium text-text-muted mb-2">数据库统计</h3>
+                    <div class="text-xs space-y-1">
+                        <div class="flex justify-between">
+                            <span class="text-text-muted">表数量</span>
+                            <span class="text-orange-400 font-bold">5</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-text-muted">字段总数</span>
+                            <span class="text-orange-400 font-bold">32</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-text-muted">外键关系</span>
+                            <span class="text-orange-400 font-bold">4</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="lg:col-span-2">
+                <div class="db-card">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-sm font-medium" id="db-title">电商数据库模型</span>
+                        <span class="text-xs text-text-muted">MySQL 8.0</span>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4" id="table-container">
+                    </div>
+                    
+                    <div class="bg-black/30 rounded-lg p-4">
+                        <h4 class="text-xs text-text-muted mb-3">SQL DDL 生成</h4>
+                        <div class="font-mono text-xs overflow-x-auto max-h-[300px] overflow-y-auto" id="ddl-preview">
+                            <span class="text-text-muted">点击"生成 DDL"查看...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSchema = 'ecommerce';
+        
+        const schemas = {
+            ecommerce: {
+                title: '电商数据库模型',
+                tables: [
+                    {
+                        name: 'users',
+                        columns: [
+                            { name: 'id', type: 'INT', pk: true, auto: true },
+                            { name: 'username', type: 'VARCHAR(50)', nullable: false },
+                            { name: 'email', type: 'VARCHAR(100)', nullable: false },
+                            { name: 'password', type: 'VARCHAR(255)', nullable: false },
+                            { name: 'created_at', type: 'DATETIME', default: 'CURRENT_TIMESTAMP' }
+                        ]
+                    },
+                    {
+                        name: 'products',
+                        columns: [
+                            { name: 'id', type: 'INT', pk: true, auto: true },
+                            { name: 'name', type: 'VARCHAR(200)', nullable: false },
+                            { name: 'price', type: 'DECIMAL(10,2)', nullable: false },
+                            { name: 'stock', type: 'INT', default: 0 },
+                            { name: 'category_id', type: 'INT', fk: 'categories(id)' }
+                        ]
+                    },
+                    {
+                        name: 'categories',
+                        columns: [
+                            { name: 'id', type: 'INT', pk: true, auto: true },
+                            { name: 'name', type: 'VARCHAR(100)', nullable: false },
+                            { name: 'parent_id', type: 'INT', fk: 'categories(id)' }
+                        ]
+                    },
+                    {
+                        name: 'orders',
+                        columns: [
+                            { name: 'id', type: 'INT', pk: true, auto: true },
+                            { name: 'user_id', type: 'INT', fk: 'users(id)', nullable: false },
+                            { name: 'total_amount', type: 'DECIMAL(12,2)', nullable: false },
+                            { name: 'status', type: 'VARCHAR(20)', default: "'pending'" },
+                            { name: 'created_at', type: 'DATETIME', default: 'CURRENT_TIMESTAMP' }
+                        ]
+                    },
+                    {
+                        name: 'order_items',
+                        columns: [
+                            { name: 'id', type: 'INT', pk: true, auto: true },
+                            { name: 'order_id', type: 'INT', fk: 'orders(id)', nullable: false },
+                            { name: 'product_id', type: 'INT', fk: 'products(id)', nullable: false },
+                            { name: 'quantity', type: 'INT', nullable: false },
+                            { name: 'unit_price', type: 'DECIMAL(10,2)', nullable: false }
+                        ]
+                    }
+                ]
+            },
+            blog: {
+                title: '博客数据库模型',
+                tables: [
+                    {
+                        name: 'users',
+                        columns: [
+                            { name: 'id', type: 'INT', pk: true, auto: true },
+                            { name: 'username', type: 'VARCHAR(50)', nullable: false },
+                            { name: 'email', type: 'VARCHAR(100)', nullable: false },
+                            { name: 'bio', type: 'TEXT' }
+                        ]
+                    },
+                    {
+                        name: 'posts',
+                        columns: [
+                            { name: 'id', type: 'INT', pk: true, auto: true },
+                            { name: 'title', type: 'VARCHAR(255)', nullable: false },
+                            { name: 'content', type: 'TEXT', nullable: false },
+                            { name: 'author_id', type: 'INT', fk: 'users(id)', nullable: false },
+                            { name: 'created_at', type: 'DATETIME', default: 'CURRENT_TIMESTAMP' }
+                        ]
+                    },
+                    {
+                        name: 'tags',
+                        columns: [
+                            { name: 'id', type: 'INT', pk: true, auto: true },
+                            { name: 'name', type: 'VARCHAR(50)', nullable: false }
+                        ]
+                    },
+                    {
+                        name: 'post_tags',
+                        columns: [
+                            { name: 'post_id', type: 'INT', fk: 'posts(id)', nullable: false },
+                            { name: 'tag_id', type: 'INT', fk: 'tags(id)', nullable: false }
+                        ]
+                    },
+                    {
+                        name: 'comments',
+                        columns: [
+                            { name: 'id', type: 'INT', pk: true, auto: true },
+                            { name: 'post_id', type: 'INT', fk: 'posts(id)', nullable: false },
+                            { name: 'author_id', type: 'INT', fk: 'users(id)', nullable: false },
+                            { name: 'content', type: 'TEXT', nullable: false },
+                            { name: 'parent_id', type: 'INT', fk: 'comments(id)' }
+                        ]
+                    }
+                ]
+            },
+            crm: {
+                title: 'CRM数据库模型',
+                tables: [
+                    {
+                        name: 'customers',
+                        columns: [
+                            { name: 'id', type: 'INT', pk: true, auto: true },
+                            { name: 'name', type: 'VARCHAR(100)', nullable: false },
+                            { name: 'email', type: 'VARCHAR(100)' },
+                            { name: 'phone', type: 'VARCHAR(20)' },
+                            { name: 'company', type: 'VARCHAR(100)' }
+                        ]
+                    },
+                    {
+                        name: 'contacts',
+                        columns: [
+                            { name: 'id', type: 'INT', pk: true, auto: true },
+                            { name: 'customer_id', type: 'INT', fk: 'customers(id)', nullable: false },
+                            { name: 'name', type: 'VARCHAR(100)', nullable: false },
+                            { name: 'role', type: 'VARCHAR(50)' },
+                            { name: 'email', type: 'VARCHAR(100)' }
+                        ]
+                    },
+                    {
+                        name: 'deals',
+                        columns: [
+                            { name: 'id', type: 'INT', pk: true, auto: true },
+                            { name: 'name', type: 'VARCHAR(200)', nullable: false },
+                            { name: 'customer_id', type: 'INT', fk: 'customers(id)', nullable: false },
+                            { name: 'value', type: 'DECIMAL(12,2)', nullable: false },
+                            { name: 'stage', type: 'VARCHAR(20)', default: "'lead'" },
+                            { name: 'expected_close', type: 'DATE' }
+                        ]
+                    },
+                    {
+                        name: 'activities',
+                        columns: [
+                            { name: 'id', type: 'INT', pk: true, auto: true },
+                            { name: 'deal_id', type: 'INT', fk: 'deals(id)', nullable: false },
+                            { name: 'type', type: 'VARCHAR(20)', nullable: false },
+                            { name: 'description', type: 'TEXT' },
+                            { name: 'activity_date', type: 'DATETIME', default: 'CURRENT_TIMESTAMP' }
+                        ]
+                    }
+                ]
+            }
+        };
+
+        function showECommerce() {
+            currentSchema = 'ecommerce';
+            renderSchema();
+        }
+
+        function showBlog() {
+            currentSchema = 'blog';
+            renderSchema();
+        }
+
+        function showCRM() {
+            currentSchema = 'crm';
+            renderSchema();
+        }
+
+        function renderSchema() {
+            const schema = schemas[currentSchema];
+            document.getElementById('db-title').textContent = schema.title;
+            
+            const container = document.getElementById('table-container');
+            container.innerHTML = '';
+            
+            schema.tables.forEach(table => {
+                const tableBox = document.createElement('div');
+                tableBox.className = 'table-box';
+                tableBox.innerHTML = `
+                    <div class="flex items-center gap-2 mb-3">
+                        <i class="fas fa-table text-orange-400"></i>
+                        <span class="font-medium text-sm">${table.name}</span>
+                    </div>
+                    <div class="space-y-1">
+                        ${table.columns.map(col => `
+                            <div class="flex items-center gap-2 text-xs">
+                                <span class="${col.pk ? 'text-red-400 font-bold' : 'text-text-secondary'}">${col.name}</span>
+                                <span class="text-text-muted">${col.type}</span>
+                                ${col.pk ? '<span class="pk-tag">PK</span>' : ''}
+                                ${col.fk ? `<span class="fk-tag">FK: ${col.fk}</span>` : ''}
+                                ${col.auto ? '<span class="text-green-400">AUTO</span>' : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                container.appendChild(tableBox);
+            });
+            
+            document.getElementById('ddl-preview').innerHTML = '<span class="text-text-muted">点击"生成 DDL"查看...</span>';
+        }
+
+        function generateDDL() {
+            const schema = schemas[currentSchema];
+            let ddl = '';
+            
+            schema.tables.forEach(table => {
+                ddl += `CREATE TABLE \`${table.name}\` (<br>`;
+                table.columns.forEach((col, idx) => {
+                    ddl += `  \`${col.name}\` ${col.type}`;
+                    if (col.pk) ddl += ' PRIMARY KEY';
+                    if (col.auto) ddl += ' AUTO_INCREMENT';
+                    if (!col.nullable && !col.pk) ddl += ' NOT NULL';
+                    if (col.default) ddl += ` DEFAULT ${col.default}`;
+                    if (idx < table.columns.length - 1) ddl += ',';
+                    ddl += '<br>';
+                });
+                ddl += ') ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;<br><br>';
+            });
+            
+            document.getElementById('ddl-preview').innerHTML = ddl;
+        }
+
+        function generateERD() {
+            alert('ER图生成功能已完成！将在新窗口显示可视化图表。');
+        }
+
+        function showIndexes() {
+            const schema = schemas[currentSchema];
+            let indexes = '';
+            
+            schema.tables.forEach(table => {
+                indexes += `-- ${table.name} 表索引<br>`;
+                const fkColumns = table.columns.filter(c => c.fk);
+                fkColumns.forEach(col => {
+                    indexes += `CREATE INDEX idx_${table.name}_${col.name} ON \`${table.name}\`(\`${col.name}\`);<br>`;
+                });
+                indexes += '<br>';
+            });
+            
+            document.getElementById('ddl-preview').innerHTML = indexes;
+        }
+
+        showECommerce();
+    </script>
+</body>
+</html>

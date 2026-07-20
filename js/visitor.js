@@ -1,61 +1,60 @@
 const SUPABASE_URL = 'https://nfikngtirtqgxtihkous.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_MVKHL8LctqsdEbkaBM4_cQ_UnfyGhkO';
 
-let supabase = null;
-
-function initSupabase() {
-    if (window.supabase && window.supabase.createClient) {
-        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    } else {
-        console.error('Supabase SDK 未加载');
-    }
-}
-
 async function trackVisitor() {
-    initSupabase();
-    
-    if (!supabase) {
-        console.error('Supabase 初始化失败');
-        return;
-    }
-    
     try {
         const today = new Date().toISOString().split('T')[0];
         
-        const { data: existing, error: selectError } = await supabase
-            .from('visitor_stats')
-            .select('*')
-            .eq('visit_date', today)
-            .single();
+        const headers = {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            'Content-Type': 'application/json'
+        };
         
-        if (selectError && selectError.code !== 'PGRST116') {
-            throw selectError;
-        }
+        const existingResponse = await fetch(
+            `${SUPABASE_URL}/rest/v1/visitor_stats?visit_date=eq.${today}&select=*`,
+            { headers }
+        );
+        const existingData = await existingResponse.json();
         
-        if (existing) {
-            await supabase
-                .from('visitor_stats')
-                .update({ 
-                    visit_count: existing.visit_count + 1,
-                    updated_at: new Date().toISOString()
-                })
-                .eq('id', existing.id);
+        if (Array.isArray(existingData) && existingData.length > 0) {
+            const existing = existingData[0];
+            await fetch(
+                `${SUPABASE_URL}/rest/v1/visitor_stats/${existing.id}`,
+                {
+                    method: 'PATCH',
+                    headers,
+                    body: JSON.stringify({
+                        visit_count: existing.visit_count + 1,
+                        updated_at: new Date().toISOString()
+                    })
+                }
+            );
         } else {
-            await supabase
-                .from('visitor_stats')
-                .insert({
-                    visit_date: today,
-                    visit_count: 1,
-                    created_at: new Date().toISOString(),
-                    updated_at: new Date().toISOString()
-                });
+            await fetch(
+                `${SUPABASE_URL}/rest/v1/visitor_stats`,
+                {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify({
+                        visit_date: today,
+                        visit_count: 1,
+                        created_at: new Date().toISOString(),
+                        updated_at: new Date().toISOString()
+                    })
+                }
+            );
         }
         
-        const { data: totalData, error: totalError } = await supabase
-            .from('visitor_stats')
-            .select('visit_count');
+        const totalResponse = await fetch(
+            `${SUPABASE_URL}/rest/v1/visitor_stats?select=visit_count`,
+            { headers }
+        );
+        const totalData = await totalResponse.json();
         
-        const totalVisitors = totalData ? totalData.reduce((sum, row) => sum + (row.visit_count || 0), 0) : 0;
+        const totalVisitors = Array.isArray(totalData) 
+            ? totalData.reduce((sum, row) => sum + (row.visit_count || 0), 0) 
+            : 0;
         
         updateVisitorDisplay({ totalVisitors });
     } catch (error) {
@@ -78,5 +77,5 @@ function updateVisitorDisplay(data) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    trackVisitor();
+    setTimeout(trackVisitor, 1000);
 });

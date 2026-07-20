@@ -75,102 +75,62 @@ function showSkillDetail(skillName) {
     });
 }
 
+function loadIframeDemo(url, loadingText) {
+    const demoArea = document.getElementById('project-demo-area');
+    if (!demoArea) return;
+    
+    const basePath = window.location.pathname.replace(/\/$/, '').split('/').slice(0, -1).join('/');
+    const fullUrl = basePath + url;
+    
+    demoArea.innerHTML = `
+        <div class="relative w-full h-full min-h-[500px]">
+            <div class="iframe-loading-overlay" id="iframe-loading">
+                <div class="loading-spinner"></div>
+                <span class="text-text-muted text-sm mt-4">${loadingText}</span>
+            </div>
+            <iframe 
+                id="demo-iframe" 
+                src="${fullUrl}" 
+                class="w-full h-full min-h-[500px] rounded-xl border-0 opacity-0 transition-opacity duration-500"
+                style="background: #0f172a;"
+            ></iframe>
+        </div>
+    `;
+    
+    setTimeout(() => {
+        const iframe = document.getElementById('demo-iframe');
+        const loading = document.getElementById('iframe-loading');
+        if (iframe) {
+            iframe.addEventListener('load', () => {
+                loading.style.display = 'none';
+                iframe.style.opacity = '1';
+            });
+            iframe.onreadystatechange = function() {
+                if (iframe.readyState === 'complete') {
+                    loading.style.display = 'none';
+                    iframe.style.opacity = '1';
+                }
+            };
+            setTimeout(() => {
+                loading.style.display = 'none';
+                iframe.style.opacity = '1';
+            }, 3000);
+        }
+    }, 100);
+}
+
 function loadProjectDemo(skillName) {
     const demoArea = document.getElementById('project-demo-area');
     if (!demoArea) return;
     
     if (skillName === 'Java') {
-        demoArea.innerHTML = `
-            <div class="relative w-full h-full min-h-[500px]">
-                <div class="iframe-loading-overlay" id="iframe-loading">
-                    <div class="loading-spinner"></div>
-                    <span class="text-text-muted text-sm mt-4">正在加载后台管理系统...</span>
-                </div>
-                <iframe 
-                    id="java-admin-frame" 
-                    src="/demos/java-admin.html" 
-                    class="w-full h-full min-h-[500px] rounded-xl border-0 opacity-0 transition-opacity duration-500"
-                    style="background: #0f172a;"
-                ></iframe>
-            </div>
-        `;
-        setTimeout(() => {
-            const iframe = document.getElementById('java-admin-frame');
-            const loading = document.getElementById('iframe-loading');
-            if (iframe) {
-                iframe.addEventListener('load', () => {
-                    loading.style.display = 'none';
-                    iframe.style.opacity = '1';
-                });
-                iframe.onreadystatechange = function() {
-                    if (iframe.readyState === 'complete') {
-                        loading.style.display = 'none';
-                        iframe.style.opacity = '1';
-                    }
-                };
-                setTimeout(() => {
-                    loading.style.display = 'none';
-                    iframe.style.opacity = '1';
-                }, 3000);
-            }
-        }, 100);
+        loadIframeDemo('/demos/java-admin.html', '正在加载后台管理系统...');
+    } else if (skillName === 'C++') {
+        loadIframeDemo('/demos/cpp-ds.html', '正在加载数据结构可视化工具...');
     } else if (skillName === 'Python') {
-        demoArea.innerHTML = `
-            <div class="space-y-4">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="text-sm font-medium">数据可视化分析</span>
-                    <button id="python-run-btn" class="px-3 py-1.5 bg-blue-500/20 text-blue-400 rounded-lg text-sm hover:bg-blue-500/30 transition-colors">运行分析</button>
-                </div>
-                <canvas id="python-chart" width="600" height="250" class="w-full rounded-lg bg-black/30"></canvas>
-                <div id="python-output" class="bg-black/30 rounded-lg p-3 font-mono text-xs text-text-secondary"></div>
-            </div>
-        `;
-        setTimeout(() => {
-            const btn = document.getElementById('python-run-btn');
-            const output = document.getElementById('python-output');
-            if (btn && output) {
-                btn.addEventListener('click', () => {
-                    output.innerHTML = '<span class="text-yellow-400">正在分析数据...</span>';
-                    const canvas = document.getElementById('python-chart');
-                    const ctx = canvas.getContext('2d');
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    
-                    const data = [45, 68, 52, 89, 73, 92, 61];
-                    const labels = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
-                    const colors = ['#3b82f6', '#f97316', '#06b6d4', '#8b5cf6', '#10b981', '#f59e0b', '#ec4899'];
-                    const maxVal = Math.max(...data);
-                    
-                    const barWidth = 60;
-                    const gap = 20;
-                    const startX = 40;
-                    const maxHeight = 200;
-                    
-                    data.forEach((val, idx) => {
-                        const x = startX + idx * (barWidth + gap);
-                        const height = (val / maxVal) * maxHeight;
-                        const gradient = ctx.createLinearGradient(x, 240 - height, x, 240);
-                        gradient.addColorStop(0, colors[idx]);
-                        gradient.addColorStop(1, colors[idx] + '80');
-                        ctx.fillStyle = gradient;
-                        ctx.fillRect(x, 240 - height, barWidth, height);
-                        ctx.fillStyle = '#9ca3af';
-                        ctx.font = '12px Arial';
-                        ctx.textAlign = 'center';
-                        ctx.fillText(labels[idx], x + barWidth / 2, 240 + 20);
-                        ctx.fillText(val, x + barWidth / 2, 240 - height - 10);
-                    });
-                    
-                    setTimeout(() => {
-                        output.innerHTML = `
-                            <span class="text-green-400">分析完成!</span><br>
-                            <span class="text-text-muted">数据总数: 1,258,340 条</span><br>
-                            <span class="text-text-muted">平均值: ${(data.reduce((a,b)=>a+b,0)/data.length).toFixed(1)}</span><br>
-                            <span class="text-text-muted">处理耗时: 0.042s</span>
-                        `;
-                    }, 500);
-                });
-            }
-        }, 100);
+        loadIframeDemo('/demos/python-ml.html', '正在加载机器学习平台...');
+    } else if (skillName === 'MySQL') {
+        loadIframeDemo('/demos/mysql-db.html', '正在加载数据库设计工具...');
     } else if (skillName === 'JavaScript') {
         demoArea.innerHTML = `
             <div class="space-y-4">
